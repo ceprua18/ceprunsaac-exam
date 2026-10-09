@@ -6,8 +6,8 @@
 }
 
 body {
-    background-color: #0d1117;
-    color: #f0f6fc;
+    background-color: #f4f6f9; /* Fondo general claro y suave */
+    color: #24292e;            /* Texto principal oscuro para buena lectura */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,19 +16,19 @@ body {
 }
 
 .container {
-    background: #161b22;
-    border: 1px solid #30363d;
+    background: #ffffff;       /* Fondo blanco puro para la tarjeta */
+    border: 1px solid #e1e4e8;  /* Borde sutil y claro */
     border-radius: 16px;
     padding: 40px;
     width: 100%;
     max-width: 450px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Sombra suave */
     text-align: center;
 }
 
 .badge {
-    background: rgba(240, 185, 11, 0.15);
-    color: #f0b90b;
+    background: rgba(217, 119, 6, 0.1); /* Tono ámbar/dorado suave */
+    color: #b45309;                     /* Texto del badge más visible */
     font-size: 13px;
     font-weight: 700;
     padding: 6px 12px;
@@ -43,11 +43,11 @@ h1 {
     font-size: 26px;
     font-weight: 800;
     margin-bottom: 10px;
-    color: #ffffff;
+    color: #111827;            /* Título oscuro de alta definición */
 }
 
 p {
-    color: #8b949e;
+    color: #4b5563;            /* Texto secundario gris legible */
     font-size: 15px;
     margin-bottom: 25px;
     line-height: 1.5;
@@ -63,23 +63,24 @@ label {
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 8px;
-    color: #c9d1d9;
+    color: #374151;            /* Etiqueta oscura */
 }
 
 input[type="text"] {
     width: 100%;
     padding: 14px 16px;
-    background: #0d1117;
-    border: 1px solid #30363d;
+    background: #f9fafb;       /* Fondo del input ligeramente grisáceo */
+    border: 1px solid #d1d5db;  /* Borde definido */
     border-radius: 10px;
-    color: #fff;
+    color: #1f2937;            /* Texto escrito oscuro */
     font-size: 16px;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 input[type="text"]:focus {
-    border-color: #f0b90b;
+    border-color: #d97706;     /* Color de enfoque (ámbar/dorado) */
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
 }
 
 /* Opciones de selección (Radio buttons estilizados) */
@@ -97,20 +98,21 @@ input[type="text"]:focus {
     gap: 10px;
     cursor: pointer;
     font-size: 14px;
-    color: #8b949e;
-    background: #0d1117;
-    border: 1px solid #30363d;
+    color: #4b5563;
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
     padding: 12px;
     border-radius: 10px;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, background 0.2s;
 }
 
 .radio-option:hover {
-    border-color: #f0b90b;
+    border-color: #d97706;
+    background: #fff;
 }
 
 .radio-option input {
-    accent-color: #f0b90b;
+    accent-color: #d97706;
     width: 18px;
     height: 18px;
     margin-top: 2px;
@@ -119,9 +121,9 @@ input[type="text"]:focus {
 
 /* Nota / cajita de error visual */
 .error-message {
-    background: rgba(248, 81, 73, 0.15);
-    border: 1px solid #f85149;
-    color: #ff7b72;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #f87171;
+    color: #dc2626;
     padding: 12px 16px;
     border-radius: 10px;
     font-size: 14px;
@@ -132,8 +134,8 @@ input[type="text"]:focus {
 }
 
 .btn-submit {
-    background: #f0b90b;
-    color: #0d1117;
+    background: #f59e0b;       /* Botón principal llamativo */
+    color: #ffffff;            /* Texto blanco para contraste */
     border: none;
     width: 100%;
     padding: 14px;
@@ -145,7 +147,7 @@ input[type="text"]:focus {
 }
 
 .btn-submit:hover {
-    background: #d4a305;
+    background: #d97706;       /* Tono más oscuro al pasar el mouse */
 }
 
 .btn-submit:active {
@@ -153,12 +155,12 @@ input[type="text"]:focus {
 }
 
 .btn-submit:disabled {
-    background: #6e7681;
+    background: #9ca3af;
     cursor: not-allowed;
 }
 
 .footer-note {
     margin-top: 25px;
     font-size: 13px;
-    color: #6e7681;
+    color: #9ca3af;
 }
