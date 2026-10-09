@@ -1,0 +1,1136 @@
+<title>Simulacro CEPRU 2026-II</title>
+<style>
+  :root{
+    --granate:#7B1E2B; --granate-soft:#A63446; --ocre:#B08033;
+    --paper:#FAF7F2; --card:#FFFFFF; --ink:#1D1A17; --ink-soft:#56504A;
+    --rule:#E0D9CE; --rule-soft:#EFEAE1; --ok:#2F6B4F; --bad:#A63446; --blank:#8A7F70;
+    --serif:Georgia,"Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root{--granate:#C9576B;--granate-soft:#E08497;--ocre:#D6A44E;--paper:#16130F;--card:#1F1B16;--ink:#EDE6DA;--ink-soft:#A79D8F;--rule:#3A332A;--rule-soft:#2A251E;--ok:#6FBF93;--bad:#E5798D;--blank:#948A7B;}}
+  :root[data-theme="dark"]{--granate:#C9576B;--granate-soft:#E08497;--ocre:#D6A44E;--paper:#16130F;--card:#1F1B16;--ink:#EDE6DA;--ink-soft:#A79D8F;--rule:#3A332A;--rule-soft:#2A251E;--ok:#6FBF93;--bad:#E5798D;--blank:#948A7B;}
+  :root[data-theme="light"]{--granate:#7B1E2B;--granate-soft:#A63446;--ocre:#B08033;--paper:#FAF7F2;--card:#FFFFFF;--ink:#1D1A17;--ink-soft:#56504A;--rule:#E0D9CE;--rule-soft:#EFEAE1;--ok:#2F6B4F;--bad:#A63446;--blank:#8A7F70;}
+  *{box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;margin:0;padding:0 0 6rem;}
+  .wrap{max-width:46rem;margin:0 auto;padding:0 1.15rem;}
+  .bar{position:sticky;top:0;z-index:20;background:var(--granate);color:#fff;border-bottom:3px solid var(--ocre);}
+  @media (prefers-color-scheme:dark){.bar{background:#5E1621;}}
+  :root[data-theme="dark"] .bar{background:#5E1621;} :root[data-theme="light"] .bar{background:#7B1E2B;}
+  .bar-in{max-width:46rem;margin:0 auto;padding:.55rem 1.15rem;display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;}
+  .clock{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.3rem;font-weight:700;}
+  .clock.warn{color:#FFD98A;} .clock.crit{color:#FFB3B3;}
+  .bar-meta{font-size:.8rem;opacity:.9;display:flex;gap:.9rem;flex-wrap:wrap;}
+  .bar-meta b{font-variant-numeric:tabular-nums;}
+  .bar-actions{margin-left:auto;display:flex;gap:.5rem;}
+  .bar button{font:inherit;font-size:.8rem;font-weight:600;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:3px;padding:.35rem .7rem;cursor:pointer;}
+  .bar button:hover{background:rgba(255,255,255,.26);}
+  header{padding:2.4rem 0 1.4rem;text-align:center;}
+  .crest{font-size:.68rem;font-weight:700;letter-spacing:.17em;text-transform:uppercase;color:var(--ocre);}
+  h1{font-family:var(--serif);font-weight:400;font-style:italic;font-size:clamp(1.9rem,5vw,2.7rem);margin:.3rem 0 .1rem;color:var(--granate);text-wrap:balance;}
+  .sub{font-family:var(--serif);font-size:1.05rem;color:var(--ink-soft);margin:0;}
+  .rubric{margin:1.4rem auto 0;max-width:36rem;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:.7rem 0;font-size:.8rem;color:var(--ink-soft);display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap;}
+  .rubric span b{color:var(--ink);font-variant-numeric:tabular-nums;}
+  section{margin-top:2.6rem;}
+  .sec-head{display:flex;align-items:baseline;gap:.8rem;border-bottom:2px solid var(--granate);padding-bottom:.35rem;margin-bottom:1.3rem;}
+  .sec-head h2{font-size:.82rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--granate);margin:0;}
+  .sec-head .count{margin-left:auto;font-size:.74rem;color:var(--ink-soft);}
+  .q{background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:1rem 1.1rem 1.1rem;margin-bottom:.9rem;display:grid;grid-template-columns:2.2rem 1fr;gap:0 .55rem;scroll-margin-top:4.5rem;}
+  .qn{font-family:var(--mono);font-size:.82rem;font-weight:700;color:var(--granate);padding-top:.12rem;font-variant-numeric:tabular-nums;}
+  .qbody{min-width:0;}
+  .stem{margin:0 0 .7rem;}
+  .stem em{font-style:italic;}
+  .given{font-size:.8rem;color:var(--ink-soft);border:1px dashed var(--rule);padding:.4rem .6rem;margin:.55rem 0;border-radius:3px;}
+  .opts{display:grid;gap:.12rem;}
+  .opt{display:flex;align-items:flex-start;gap:.5rem;padding:.28rem .45rem;border-radius:3px;cursor:pointer;border:1px solid transparent;}
+  .opt:hover{background:var(--rule-soft);}
+  .opt input{margin:.34rem 0 0;accent-color:var(--granate);flex:none;}
+  .opt .ltr{font-family:var(--mono);font-size:.82rem;font-weight:700;color:var(--ink-soft);flex:none;padding-top:.07rem;}
+  .opt .txt{min-width:0;}
+  .opt:focus-within{outline:2px solid var(--granate);outline-offset:1px;}
+  .q.graded .opt{cursor:default;}
+  .q.graded .opt.correct{background:color-mix(in srgb,var(--ok) 14%,transparent);border-color:var(--ok);}
+  .q.graded .opt.wrong{background:color-mix(in srgb,var(--bad) 14%,transparent);border-color:var(--bad);}
+  .q.graded .opt.correct .ltr{color:var(--ok);} .q.graded .opt.wrong .ltr{color:var(--bad);}
+  .verdict{margin-top:.6rem;font-size:.76rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+  .verdict.ok{color:var(--ok);} .verdict.bad{color:var(--bad);} .verdict.blank{color:var(--blank);}
+  .sol{display:none;margin-top:.7rem;padding:.7rem .85rem;border-left:3px solid var(--ocre);background:color-mix(in srgb,var(--ocre) 7%,transparent);border-radius:0 4px 4px 0;font-size:.9rem;line-height:1.6;}
+  .q.graded .sol{display:block;}
+  .sol b{color:var(--granate);}
+  .sol figure{margin:.7rem 0 .3rem;}
+  .sol figure svg{max-width:330px;}
+  .sol .figcap{font-size:.78rem;color:var(--ink-soft);text-align:center;margin-top:.1rem;}
+  .sol .clave{display:inline-block;margin-top:.4rem;font-weight:700;color:var(--ok);}
+  figure{margin:.8rem 0;overflow-x:auto;}
+  figure svg{display:block;max-width:100%;height:auto;margin:0 auto;background:transparent;}
+  .fig-stroke{stroke:var(--ink);}
+  svg text{fill:var(--ink);font-family:var(--sans);font-size:13px;}
+  svg .lbl-i{font-style:italic;font-family:var(--serif);font-size:14px;}
+  svg .dim{fill:var(--ink-soft);font-size:12px;}
+  svg line,svg path,svg polyline,svg polygon,svg rect,svg circle{vector-effect:non-scaling-stroke;}
+  #result{display:none;margin-top:2.6rem;}
+  #result.show{display:block;}
+  .score-card{border:2px solid var(--granate);border-radius:5px;overflow:hidden;background:var(--card);}
+  .score-top{background:var(--granate);color:#fff;padding:1.4rem 1.2rem;text-align:center;}
+  @media (prefers-color-scheme:dark){.score-top{background:#5E1621;}}
+  :root[data-theme="dark"] .score-top{background:#5E1621;} :root[data-theme="light"] .score-top{background:#7B1E2B;}
+  .score-top .big{font-family:var(--mono);font-size:3rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;}
+  .score-top .of{font-size:.82rem;opacity:.85;letter-spacing:.09em;text-transform:uppercase;}
+  .score-top .pts{margin-top:.5rem;font-family:var(--mono);font-size:.9rem;opacity:.85;}
+  table.bysec{width:100%;border-collapse:collapse;font-size:.88rem;}
+  table.bysec th,table.bysec td{padding:.5rem .8rem;text-align:left;border-bottom:1px solid var(--rule-soft);}
+  table.bysec th{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;}
+  table.bysec td.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;}
+  table.bysec td.nota{text-align:right;font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums;}
+  .cta{display:block;width:100%;margin-top:1.6rem;font:inherit;font-weight:700;letter-spacing:.04em;background:var(--granate);color:#fff;border:0;border-radius:4px;padding:.95rem;cursor:pointer;}
+  .cta:hover{background:var(--granate-soft);}
+  @media (prefers-color-scheme:dark){.cta{background:#5E1621;}}
+  :root[data-theme="dark"] .cta{background:#5E1621;} :root[data-theme="light"] .cta{background:#7B1E2B;}
+  .note{margin-top:1.2rem;font-size:.85rem;color:var(--ink-soft);text-align:center;}
+  .foot{margin-top:3rem;text-align:center;font-size:.76rem;color:var(--ink-soft);}
+  @media (max-width:480px){.q{grid-template-columns:1.8rem 1fr;padding:.85rem .8rem .9rem;}body{font-size:15px;}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+
+<div class="bar"><div class="bar-in">
+  <div class="clock" id="clock">2:00:00</div>
+  <div class="bar-meta"><span>Marcadas <b id="answered">0</b>/60</span><span>En blanco <b id="blanks">60</b></span></div>
+  <div class="bar-actions"><button id="jump" type="button">Sin marcar ↓</button></div>
+</div></div>
+
+<div class="wrap">
+<header>
+  <div class="crest">Centro de Estudios Preuniversitario · UNSAAC</div>
+  <h1>Simulacro CEPRU Ordinario</h1>
+  <p class="sub">2026 – II · 60 preguntas · 6 cursos</p>
+  <div class="rubric"><span>Correcta <b>+2</b></span><span>Blanco <b>0</b></span><span>Mala <b>0</b></span><span>Por curso <b>/20</b></span><span>Total <b>/120</b></span></div>
+</header>
+
+<form id="exam">
+
+<!-- ════════ ÁLGEBRA ════════ -->
+<section data-sec="Álgebra">
+  <div class="sec-head"><h2>Álgebra</h2><span class="count">10 preguntas</span></div>
+
+  <div class="q" data-c="b"><div class="qn">01</div><div class="qbody">
+    <p class="stem">Uno de los factores de 27(x + 2)³ − 64, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q1" value="a"><span class="ltr">a)</span><span class="txt">3x + 8</span></label>
+      <label class="opt"><input type="radio" name="q1" value="b"><span class="ltr">b)</span><span class="txt">3x + 2</span></label>
+      <label class="opt"><input type="radio" name="q1" value="c"><span class="ltr">c)</span><span class="txt">9x² + 12x + 16</span></label>
+      <label class="opt"><input type="radio" name="q1" value="d"><span class="ltr">d)</span><span class="txt">3x − 2</span></label>
+      <label class="opt"><input type="radio" name="q1" value="e"><span class="ltr">e)</span><span class="txt">9x² + 48x + 4</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Es una diferencia de cubos: 27(x+2)³ − 64 = [3(x+2)]³ − 4³. Con a = 3(x+2) = 3x+6 y b = 4: a³−b³ = (a−b)(a²+ab+b²). El factor (a−b) = (3x+6) − 4 = <b>3x+2</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">02</div><div class="qbody">
+    <p class="stem">La expresión equivalente a: b² + c² − a² − d² − 2ad + 2bc, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q2" value="a"><span class="ltr">a)</span><span class="txt">(b + c + a − d)(b + c − a + d)</span></label>
+      <label class="opt"><input type="radio" name="q2" value="b"><span class="ltr">b)</span><span class="txt">(b − c + a + d)(b + c − a − d)</span></label>
+      <label class="opt"><input type="radio" name="q2" value="c"><span class="ltr">c)</span><span class="txt">(b + c + a + d)(b + c − a − d)</span></label>
+      <label class="opt"><input type="radio" name="q2" value="d"><span class="ltr">d)</span><span class="txt">(b + c − a − d)(b − c + a + d)</span></label>
+      <label class="opt"><input type="radio" name="q2" value="e"><span class="ltr">e)</span><span class="txt">(b + c + a + d)(b − c − a + d)</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Se agrupa para formar diferencia de cuadrados: (b² + 2bc + c²) − (a² + 2ad + d²) = (b+c)² − (a+d)² = [(b+c)+(a+d)]·[(b+c)−(a+d)] = <b>(b+c+a+d)(b+c−a−d)</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">03</div><div class="qbody">
+    <p class="stem">La suma de los factores primos del polinomio P(x) = x³ − 7x − 6, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q3" value="a"><span class="ltr">a)</span><span class="txt">3x − 1</span></label>
+      <label class="opt"><input type="radio" name="q3" value="b"><span class="ltr">b)</span><span class="txt">3x</span></label>
+      <label class="opt"><input type="radio" name="q3" value="c"><span class="ltr">c)</span><span class="txt">3x + 2</span></label>
+      <label class="opt"><input type="radio" name="q3" value="d"><span class="ltr">d)</span><span class="txt">3x − 5</span></label>
+      <label class="opt"><input type="radio" name="q3" value="e"><span class="ltr">e)</span><span class="txt">3x + 4</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Por divisores binómicos: P(−1) = −1+7−6 = 0, P(−2) = −8+14−6 = 0, P(3) = 27−21−6 = 0. Luego P(x) = (x+1)(x+2)(x−3). Suma de factores primos = (x+1)+(x+2)+(x−3) = <b>3x</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">04</div><div class="qbody">
+    <p class="stem">El número de factores primos del polinomio P(x) = x⁴ − 5x² + 4, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q4" value="a"><span class="ltr">a)</span><span class="txt">2</span></label>
+      <label class="opt"><input type="radio" name="q4" value="b"><span class="ltr">b)</span><span class="txt">3</span></label>
+      <label class="opt"><input type="radio" name="q4" value="c"><span class="ltr">c)</span><span class="txt">4</span></label>
+      <label class="opt"><input type="radio" name="q4" value="d"><span class="ltr">d)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q4" value="e"><span class="ltr">e)</span><span class="txt">6</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Aspa simple en x²: x⁴ − 5x² + 4 = (x² − 1)(x² − 4). Cada una es diferencia de cuadrados: (x−1)(x+1)(x−2)(x+2). Son <b>4</b> factores primos. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="d"><div class="qn">05</div><div class="qbody">
+    <p class="stem">Luego de factorizar S(x) = 18x³ + 9x² − 2x − 1, uno de sus factores primos es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q5" value="a"><span class="ltr">a)</span><span class="txt">2x − 1</span></label>
+      <label class="opt"><input type="radio" name="q5" value="b"><span class="ltr">b)</span><span class="txt">x + 1</span></label>
+      <label class="opt"><input type="radio" name="q5" value="c"><span class="ltr">c)</span><span class="txt">3x + 2</span></label>
+      <label class="opt"><input type="radio" name="q5" value="d"><span class="ltr">d)</span><span class="txt">3x − 1</span></label>
+      <label class="opt"><input type="radio" name="q5" value="e"><span class="ltr">e)</span><span class="txt">2x + 3</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Agrupando: 9x²(2x+1) − 1(2x+1) = (2x+1)(9x²−1) = (2x+1)(3x−1)(3x+1). Un factor primo es <b>3x−1</b>. <span class="clave">Clave: D</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">06</div><div class="qbody">
+    <p class="stem">Luego de racionalizar E = a / ⁷√(x³ y⁴ z²), el denominador de la expresión final es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q6" value="a"><span class="ltr">a)</span><span class="txt">x² y² z²</span></label>
+      <label class="opt"><input type="radio" name="q6" value="b"><span class="ltr">b)</span><span class="txt">x y z</span></label>
+      <label class="opt"><input type="radio" name="q6" value="c"><span class="ltr">c)</span><span class="txt">x⁴ y³ z⁵</span></label>
+      <label class="opt"><input type="radio" name="q6" value="d"><span class="ltr">d)</span><span class="txt">x y² z</span></label>
+      <label class="opt"><input type="radio" name="q6" value="e"><span class="ltr">e)</span><span class="txt">x y z²</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Se multiplica numerador y denominador por ⁷√(x⁴ y³ z⁵) para completar exponentes a 7: ⁷√(x³·x⁴ · y⁴·y³ · z²·z⁵) = ⁷√(x⁷ y⁷ z⁷) = <b>xyz</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">07</div><div class="qbody">
+    <p class="stem">El denominador racionalizado de la expresión V = (x − 4) / (x − 3√x + 2) ; x &gt; 0, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q7" value="a"><span class="ltr">a)</span><span class="txt">x + 1</span></label>
+      <label class="opt"><input type="radio" name="q7" value="b"><span class="ltr">b)</span><span class="txt">x − 3</span></label>
+      <label class="opt"><input type="radio" name="q7" value="c"><span class="ltr">c)</span><span class="txt">x − 1</span></label>
+      <label class="opt"><input type="radio" name="q7" value="d"><span class="ltr">d)</span><span class="txt">x + 3</span></label>
+      <label class="opt"><input type="radio" name="q7" value="e"><span class="ltr">e)</span><span class="txt">x − 9</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Factorizando con u = √x: denominador x − 3√x + 2 = (√x − 1)(√x − 2) y numerador x − 4 = (√x − 2)(√x + 2). Se simplifica (√x − 2): V = (√x + 2)/(√x − 1). Al racionalizar (×(√x + 1)) el denominador queda (√x − 1)(√x + 1) = <b>x − 1</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">08</div><div class="qbody">
+    <p class="stem">Si x₁ y x₂ son las raíces de la ecuación 2x² − 8x + 5 = 0, el valor de (1/x₁ + 1/x₂) es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q8" value="a"><span class="ltr">a)</span><span class="txt">5/8</span></label>
+      <label class="opt"><input type="radio" name="q8" value="b"><span class="ltr">b)</span><span class="txt">8/5</span></label>
+      <label class="opt"><input type="radio" name="q8" value="c"><span class="ltr">c)</span><span class="txt">4/5</span></label>
+      <label class="opt"><input type="radio" name="q8" value="d"><span class="ltr">d)</span><span class="txt">2</span></label>
+      <label class="opt"><input type="radio" name="q8" value="e"><span class="ltr">e)</span><span class="txt">8</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Por Cardano-Vieta: x₁+x₂ = 8/2 = 4 ; x₁·x₂ = 5/2. Entonces 1/x₁ + 1/x₂ = (x₁+x₂)/(x₁·x₂) = 4 ÷ (5/2) = <b>8/5</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">09</div><div class="qbody">
+    <p class="stem">El valor de "x" en la ecuación (x + 1) + (x + 2) + (x + 3) + … + (x + n) = n², es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q9" value="a"><span class="ltr">a)</span><span class="txt">n + 1</span></label>
+      <label class="opt"><input type="radio" name="q9" value="b"><span class="ltr">b)</span><span class="txt">(n − 1)/2</span></label>
+      <label class="opt"><input type="radio" name="q9" value="c"><span class="ltr">c)</span><span class="txt">n − 1</span></label>
+      <label class="opt"><input type="radio" name="q9" value="d"><span class="ltr">d)</span><span class="txt">(n + 1)/2</span></label>
+      <label class="opt"><input type="radio" name="q9" value="e"><span class="ltr">e)</span><span class="txt">n</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Hay n términos: nx + (1+2+…+n) = n² → nx + n(n+1)/2 = n². Dividiendo entre n: x + (n+1)/2 = n → x = n − (n+1)/2 = (2n − n − 1)/2 = <b>(n − 1)/2</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">10</div><div class="qbody">
+    <p class="stem">El número de valores enteros que satisfacen el sistema 3x − 7 &lt; x + 5 &lt; 2x + 9, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q10" value="a"><span class="ltr">a)</span><span class="txt">7</span></label>
+      <label class="opt"><input type="radio" name="q10" value="b"><span class="ltr">b)</span><span class="txt">8</span></label>
+      <label class="opt"><input type="radio" name="q10" value="c"><span class="ltr">c)</span><span class="txt">9</span></label>
+      <label class="opt"><input type="radio" name="q10" value="d"><span class="ltr">d)</span><span class="txt">10</span></label>
+      <label class="opt"><input type="radio" name="q10" value="e"><span class="ltr">e)</span><span class="txt">11</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Se separan: 3x−7 &lt; x+5 → 2x &lt; 12 → x &lt; 6. Y x+5 &lt; 2x+9 → −4 &lt; x. Entonces −4 &lt; x &lt; 6. Enteros: −3, −2, −1, 0, 1, 2, 3, 4, 5 → <b>9 valores</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+</section>
+
+<!-- ════════ ARITMÉTICA ════════ -->
+<section data-sec="Aritmética">
+  <div class="sec-head"><h2>Aritmética</h2><span class="count">10 preguntas</span></div>
+
+  <div class="q" data-c="b"><div class="qn">11</div><div class="qbody">
+    <p class="stem">En una progresión aritmética, a₃ = 1 y a₇ = −7. Calcular la suma de los 15 primeros términos.</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q11" value="a"><span class="ltr">a)</span><span class="txt">−120</span></label>
+      <label class="opt"><input type="radio" name="q11" value="b"><span class="ltr">b)</span><span class="txt">−135</span></label>
+      <label class="opt"><input type="radio" name="q11" value="c"><span class="ltr">c)</span><span class="txt">−140</span></label>
+      <label class="opt"><input type="radio" name="q11" value="d"><span class="ltr">d)</span><span class="txt">−150</span></label>
+      <label class="opt"><input type="radio" name="q11" value="e"><span class="ltr">e)</span><span class="txt">−144</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> r = (a₇ − a₃)/(7−3) = (−7 − 1)/4 = −2. a₁ = a₃ − 2r = 1 − 2(−2) = 5. S₁₅ = (15/2)[2(5) + 14(−2)] = (15/2)(10 − 28) = (15/2)(−18) = <b>−135</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">12</div><div class="qbody">
+    <p class="stem">En una progresión geométrica a₁ = 5 y a₄ = 40. Calcular la suma de los seis primeros términos.</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q12" value="a"><span class="ltr">a)</span><span class="txt">305</span></label>
+      <label class="opt"><input type="radio" name="q12" value="b"><span class="ltr">b)</span><span class="txt">310</span></label>
+      <label class="opt"><input type="radio" name="q12" value="c"><span class="ltr">c)</span><span class="txt">315</span></label>
+      <label class="opt"><input type="radio" name="q12" value="d"><span class="ltr">d)</span><span class="txt">320</span></label>
+      <label class="opt"><input type="radio" name="q12" value="e"><span class="ltr">e)</span><span class="txt">325</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> r³ = a₄/a₁ = 40/5 = 8 → r = 2. S₆ = a₁(r⁶ − 1)/(r − 1) = 5(64 − 1)/(2 − 1) = 5·63 = <b>315</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">13</div><div class="qbody">
+    <p class="stem">Calcular el valor de la sumatoria Σ (desde k=1 hasta 20) de (3k + 2).</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q13" value="a"><span class="ltr">a)</span><span class="txt">650</span></label>
+      <label class="opt"><input type="radio" name="q13" value="b"><span class="ltr">b)</span><span class="txt">660</span></label>
+      <label class="opt"><input type="radio" name="q13" value="c"><span class="ltr">c)</span><span class="txt">670</span></label>
+      <label class="opt"><input type="radio" name="q13" value="d"><span class="ltr">d)</span><span class="txt">680</span></label>
+      <label class="opt"><input type="radio" name="q13" value="e"><span class="ltr">e)</span><span class="txt">690</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Σ(3k+2) = 3·Σk + Σ2 = 3·[20·21/2] + 2·20 = 3·210 + 40 = 630 + 40 = <b>670</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">14</div><div class="qbody">
+    <p class="stem">Un número de dos cifras tiene como suma de cifras 11. Si se intercambian sus cifras, el nuevo número excede en 45 al número original. Hallar dicho número.</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q14" value="a"><span class="ltr">a)</span><span class="txt">29</span></label>
+      <label class="opt"><input type="radio" name="q14" value="b"><span class="ltr">b)</span><span class="txt">38</span></label>
+      <label class="opt"><input type="radio" name="q14" value="c"><span class="ltr">c)</span><span class="txt">47</span></label>
+      <label class="opt"><input type="radio" name="q14" value="d"><span class="ltr">d)</span><span class="txt">56</span></label>
+      <label class="opt"><input type="radio" name="q14" value="e"><span class="ltr">e)</span><span class="txt">65</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Número = 10a + b, con a + b = 11. Invertido: 10b + a = (10a + b) + 45 → 9b − 9a = 45 → b − a = 5. Con a + b = 11: b = 8, a = 3. El número es <b>38</b> (verificación: 83 − 38 = 45). <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">15</div><div class="qbody">
+    <p class="stem">Al convertir el número 365 (base 10) al sistema de base 7, la suma de sus cifras es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q15" value="a"><span class="ltr">a)</span><span class="txt">7</span></label>
+      <label class="opt"><input type="radio" name="q15" value="b"><span class="ltr">b)</span><span class="txt">6</span></label>
+      <label class="opt"><input type="radio" name="q15" value="c"><span class="ltr">c)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q15" value="d"><span class="ltr">d)</span><span class="txt">8</span></label>
+      <label class="opt"><input type="radio" name="q15" value="e"><span class="ltr">e)</span><span class="txt">4</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Divisiones sucesivas entre 7: 365 = 7·52 + 1 ; 52 = 7·7 + 3 ; 7 = 7·1 + 0 ; 1 = 7·0 + 1. Leyendo residuos: 365 = 1031₇. Suma de cifras = 1 + 0 + 3 + 1 = <b>5</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">16</div><div class="qbody">
+    <p class="stem">El numeral de cifras máximas de tres cifras del sistema de base "n", expresado en base 10, es 124. Hallar "n".</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q16" value="a"><span class="ltr">a)</span><span class="txt">4</span></label>
+      <label class="opt"><input type="radio" name="q16" value="b"><span class="ltr">b)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q16" value="c"><span class="ltr">c)</span><span class="txt">6</span></label>
+      <label class="opt"><input type="radio" name="q16" value="d"><span class="ltr">d)</span><span class="txt">7</span></label>
+      <label class="opt"><input type="radio" name="q16" value="e"><span class="ltr">e)</span><span class="txt">8</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> El numeral de cifras máximas de 3 cifras en base n equivale a n³ − 1. Entonces n³ − 1 = 124 → n³ = 125 → n = <b>5</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">17</div><div class="qbody">
+    <p class="stem">¿Cuál es el valor de "a" si el numeral <span style="border-top:1px solid currentColor">2a41</span> es divisible por 11?</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q17" value="a"><span class="ltr">a)</span><span class="txt">3</span></label>
+      <label class="opt"><input type="radio" name="q17" value="b"><span class="ltr">b)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q17" value="c"><span class="ltr">c)</span><span class="txt">7</span></label>
+      <label class="opt"><input type="radio" name="q17" value="d"><span class="ltr">d)</span><span class="txt">4</span></label>
+      <label class="opt"><input type="radio" name="q17" value="e"><span class="ltr">e)</span><span class="txt">6</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Criterio del 11 (suma alternada desde la derecha): 1 − 4 + a − 2 = a − 5, múltiplo de 11 → a − 5 = 0 → a = <b>5</b> (verificación: 2541 = 11·231). <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="d"><div class="qn">18</div><div class="qbody">
+    <p class="stem">¿Cuántos números de dos cifras, al dividirse entre 7 dan residuo 2 y al dividirse entre 4 dan residuo 1?</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q18" value="a"><span class="ltr">a)</span><span class="txt">0</span></label>
+      <label class="opt"><input type="radio" name="q18" value="b"><span class="ltr">b)</span><span class="txt">1</span></label>
+      <label class="opt"><input type="radio" name="q18" value="c"><span class="ltr">c)</span><span class="txt">2</span></label>
+      <label class="opt"><input type="radio" name="q18" value="d"><span class="ltr">d)</span><span class="txt">3</span></label>
+      <label class="opt"><input type="radio" name="q18" value="e"><span class="ltr">e)</span><span class="txt">4</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> N = 7k + 2. Imponiendo N ≡ 1 (mód 4): 7k + 2 ≡ 1 → 3k ≡ 3 → k ≡ 1 (mód 4). Para k = 5, 9, 13 se obtienen los de dos cifras: 37, 65, 93 → <b>3 números</b>. <span class="clave">Clave: D</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">19</div><div class="qbody">
+    <p class="stem">¿Cuántos divisores tiene el número 3600?</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q19" value="a"><span class="ltr">a)</span><span class="txt">40</span></label>
+      <label class="opt"><input type="radio" name="q19" value="b"><span class="ltr">b)</span><span class="txt">42</span></label>
+      <label class="opt"><input type="radio" name="q19" value="c"><span class="ltr">c)</span><span class="txt">45</span></label>
+      <label class="opt"><input type="radio" name="q19" value="d"><span class="ltr">d)</span><span class="txt">48</span></label>
+      <label class="opt"><input type="radio" name="q19" value="e"><span class="ltr">e)</span><span class="txt">36</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Descomposición canónica: 3600 = 2⁴ · 3² · 5². Cantidad de divisores = (4+1)(2+1)(2+1) = 5·3·3 = <b>45</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="a"><div class="qn">20</div><div class="qbody">
+    <p class="stem">La suma de todos los divisores del número 240 es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q20" value="a"><span class="ltr">a)</span><span class="txt">744</span></label>
+      <label class="opt"><input type="radio" name="q20" value="b"><span class="ltr">b)</span><span class="txt">720</span></label>
+      <label class="opt"><input type="radio" name="q20" value="c"><span class="ltr">c)</span><span class="txt">768</span></label>
+      <label class="opt"><input type="radio" name="q20" value="d"><span class="ltr">d)</span><span class="txt">756</span></label>
+      <label class="opt"><input type="radio" name="q20" value="e"><span class="ltr">e)</span><span class="txt">732</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> 240 = 2⁴ · 3 · 5. Suma de divisores = [(2⁵−1)/(2−1)]·[(3²−1)/(3−1)]·[(5²−1)/(5−1)] = 31 · 4 · 6 = <b>744</b>. <span class="clave">Clave: A</span></div>
+  </div></div>
+</section>
+
+<!-- ════════ COMPETENCIA COMUNICATIVA ════════ -->
+<section data-sec="Competencia Comunicativa">
+  <div class="sec-head"><h2>Competencia Comunicativa</h2><span class="count">10 preguntas</span></div>
+
+  <div class="q" data-c="b"><div class="qn">21</div><div class="qbody">
+    <p class="stem">Según su acentuación, las palabras <em>reloj, compás</em> y <em>reunión</em> son:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q21" value="a"><span class="ltr">a)</span><span class="txt">Paroxítonas (graves)</span></label>
+      <label class="opt"><input type="radio" name="q21" value="b"><span class="ltr">b)</span><span class="txt">Oxítonas (agudas)</span></label>
+      <label class="opt"><input type="radio" name="q21" value="c"><span class="ltr">c)</span><span class="txt">Proparoxítonas (esdrújulas)</span></label>
+      <label class="opt"><input type="radio" name="q21" value="d"><span class="ltr">d)</span><span class="txt">Sobresdrújulas</span></label>
+      <label class="opt"><input type="radio" name="q21" value="e"><span class="ltr">e)</span><span class="txt">Monosílabas</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> En las tres la mayor fuerza de voz recae en la última sílaba: re-<u>loj</u>, com-<u>pás</u>, re-u-<u>nión</u>. Las palabras acentuadas en la última sílaba se llaman agudas u <b>oxítonas</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">22</div><div class="qbody">
+    <p class="stem">La serie que presenta únicamente palabras graves (llanas), es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q22" value="a"><span class="ltr">a)</span><span class="txt">cantó – reloj – París</span></label>
+      <label class="opt"><input type="radio" name="q22" value="b"><span class="ltr">b)</span><span class="txt">árbol – lápiz – césped</span></label>
+      <label class="opt"><input type="radio" name="q22" value="c"><span class="ltr">c)</span><span class="txt">médico – teléfono – sábana</span></label>
+      <label class="opt"><input type="radio" name="q22" value="d"><span class="ltr">d)</span><span class="txt">sofá – maní – café</span></label>
+      <label class="opt"><input type="radio" name="q22" value="e"><span class="ltr">e)</span><span class="txt">útil – camión – pared</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Graves = acento en la penúltima sílaba. <em>ár-bol, lá-piz, cés-ped</em> son las tres graves. En (a) y (d) son agudas, en (c) esdrújulas, y (e) mezcla grave + agudas. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="d"><div class="qn">23</div><div class="qbody">
+    <p class="stem">La oración que presenta tildación correcta, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q23" value="a"><span class="ltr">a)</span><span class="txt">El miedo es una emoción tipica.</span></label>
+      <label class="opt"><input type="radio" name="q23" value="b"><span class="ltr">b)</span><span class="txt">Agilmente cruzó el cesped.</span></label>
+      <label class="opt"><input type="radio" name="q23" value="c"><span class="ltr">c)</span><span class="txt">Socorro rapido al capitan.</span></label>
+      <label class="opt"><input type="radio" name="q23" value="d"><span class="ltr">d)</span><span class="txt">Dé al comerciante algún regalo.</span></label>
+      <label class="opt"><input type="radio" name="q23" value="e"><span class="ltr">e)</span><span class="txt">Fue un tratado ruso-japones.</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> En (d): <em>Dé</em> lleva tilde diacrítica (verbo dar) y <em>algún</em> es aguda terminada en "n". Las demás omiten tildes obligatorias: tí­pica, Á­gilmente/césped, rá­pido/capi­tán, japo­nés. <span class="clave">Clave: D</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">24</div><div class="qbody">
+    <p class="stem">La expresión con uso correcto de las letras mayúsculas, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q24" value="a"><span class="ltr">a)</span><span class="txt">El Río Amazonas nace en el perú.</span></label>
+      <label class="opt"><input type="radio" name="q24" value="b"><span class="ltr">b)</span><span class="txt">el río amazonas nace en el Perú.</span></label>
+      <label class="opt"><input type="radio" name="q24" value="c"><span class="ltr">c)</span><span class="txt">El río Amazonas nace en el Perú.</span></label>
+      <label class="opt"><input type="radio" name="q24" value="d"><span class="ltr">d)</span><span class="txt">El río amazonas Nace en el Perú.</span></label>
+      <label class="opt"><input type="radio" name="q24" value="e"><span class="ltr">e)</span><span class="txt">El Río Amazonas Nace en el Perú.</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> "río" es nombre común (minúscula), "Amazonas" y "Perú" son propios (mayúscula) y la oración inicia con mayúscula. Solo (c) cumple todo. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">25</div><div class="qbody">
+    <p class="stem">El enunciado que presenta uso correcto de las letras mayúsculas, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q25" value="a"><span class="ltr">a)</span><span class="txt">El estudió en la Universidad nacional.</span></label>
+      <label class="opt"><input type="radio" name="q25" value="b"><span class="ltr">b)</span><span class="txt">La Universidad Nacional San Antonio Abad abrió inscripciones.</span></label>
+      <label class="opt"><input type="radio" name="q25" value="c"><span class="ltr">c)</span><span class="txt">Visitamos el Museo y la catedral del cusco.</span></label>
+      <label class="opt"><input type="radio" name="q25" value="d"><span class="ltr">d)</span><span class="txt">El Lago Titicaca está en puno.</span></label>
+      <label class="opt"><input type="radio" name="q25" value="e"><span class="ltr">e)</span><span class="txt">Compré el libro historia del Perú.</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> El nombre propio de una institución lleva mayúscula en todas sus palabras significativas: <em>Universidad Nacional San Antonio Abad</em>. En las demás hay errores (nacional, cusco, puno en minúscula; o Lago/Museo genéricos en mayúscula; "Historia del Perú" como título). <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">26</div><div class="qbody">
+    <p class="stem">En la expresión <em>«Unos cantaban; otros, bailaban»</em>, la coma empleada es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q26" value="a"><span class="ltr">a)</span><span class="txt">Enumerativa</span></label>
+      <label class="opt"><input type="radio" name="q26" value="b"><span class="ltr">b)</span><span class="txt">Vocativa</span></label>
+      <label class="opt"><input type="radio" name="q26" value="c"><span class="ltr">c)</span><span class="txt">Elíptica</span></label>
+      <label class="opt"><input type="radio" name="q26" value="d"><span class="ltr">d)</span><span class="txt">Hiperbática</span></label>
+      <label class="opt"><input type="radio" name="q26" value="e"><span class="ltr">e)</span><span class="txt">Incidental</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> La coma después de "otros" reemplaza al verbo omitido ("cantaban"/"bailaban"). La coma que sustituye un verbo elidido se llama coma <b>elíptica</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">27</div><div class="qbody">
+    <p class="stem">En el enunciado <em>«Ana estudia Medicina ___ su hermano, Derecho»</em>, el signo de puntuación que se ha omitido es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q27" value="a"><span class="ltr">a)</span><span class="txt">Paréntesis</span></label>
+      <label class="opt"><input type="radio" name="q27" value="b"><span class="ltr">b)</span><span class="txt">Dos puntos</span></label>
+      <label class="opt"><input type="radio" name="q27" value="c"><span class="ltr">c)</span><span class="txt">Punto y coma</span></label>
+      <label class="opt"><input type="radio" name="q27" value="d"><span class="ltr">d)</span><span class="txt">Coma</span></label>
+      <label class="opt"><input type="radio" name="q27" value="e"><span class="ltr">e)</span><span class="txt">Puntos suspensivos</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Se separan dos proposiciones coordinadas y la segunda ya contiene una coma (elíptica). En ese caso corresponde el <b>punto y coma</b>: «Ana estudia Medicina; su hermano, Derecho». <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="e"><div class="qn">28</div><div class="qbody">
+    <p class="stem">La expresión que presenta paréntesis en acotación de los personajes en obras teatrales, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q28" value="a"><span class="ltr">a)</span><span class="txt">Nació en Cusco (Perú).</span></label>
+      <label class="opt"><input type="radio" name="q28" value="b"><span class="ltr">b)</span><span class="txt">El agua (H₂O) es vital para la vida.</span></label>
+      <label class="opt"><input type="radio" name="q28" value="c"><span class="ltr">c)</span><span class="txt">Ser o no ser (…), esa es la cuestión.</span></label>
+      <label class="opt"><input type="radio" name="q28" value="d"><span class="ltr">d)</span><span class="txt">Los periodistas (varones y mujeres) protestaron.</span></label>
+      <label class="opt"><input type="radio" name="q28" value="e"><span class="ltr">e)</span><span class="txt">Julieta. (Acercándose lentamente a Romeo) Te amo.</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> En las obras teatrales, el paréntesis encierra las acotaciones (indicaciones de acción o gesto del personaje). Eso ocurre en (e): <em>(Acercándose lentamente a Romeo)</em>. <span class="clave">Clave: E</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">29</div><div class="qbody">
+    <p class="stem">Las palabras <em>belleza, justicia</em> y <em>esperanza</em> son sustantivos:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q29" value="a"><span class="ltr">a)</span><span class="txt">Concretos</span></label>
+      <label class="opt"><input type="radio" name="q29" value="b"><span class="ltr">b)</span><span class="txt">Abstractos</span></label>
+      <label class="opt"><input type="radio" name="q29" value="c"><span class="ltr">c)</span><span class="txt">Colectivos</span></label>
+      <label class="opt"><input type="radio" name="q29" value="d"><span class="ltr">d)</span><span class="txt">Propios</span></label>
+      <label class="opt"><input type="radio" name="q29" value="e"><span class="ltr">e)</span><span class="txt">Individuales</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Designan realidades no perceptibles por los sentidos (cualidades, ideas, sentimientos); por ello son sustantivos <b>abstractos</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">30</div><div class="qbody">
+    <p class="stem">Las palabras <em>jauría, enjambre, arboleda</em> y <em>constelación</em> son sustantivos:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q30" value="a"><span class="ltr">a)</span><span class="txt">Propios</span></label>
+      <label class="opt"><input type="radio" name="q30" value="b"><span class="ltr">b)</span><span class="txt">Abstractos</span></label>
+      <label class="opt"><input type="radio" name="q30" value="c"><span class="ltr">c)</span><span class="txt">Colectivos</span></label>
+      <label class="opt"><input type="radio" name="q30" value="d"><span class="ltr">d)</span><span class="txt">Individuales</span></label>
+      <label class="opt"><input type="radio" name="q30" value="e"><span class="ltr">e)</span><span class="txt">Epicenos</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> En singular nombran un conjunto: jauría (perros), enjambre (abejas), arboleda (árboles), constelación (estrellas). Son sustantivos <b>colectivos</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+</section>
+
+<!-- ════════ FÍSICA ════════ -->
+<section data-sec="Física">
+  <div class="sec-head"><h2>Física</h2><span class="count">10 preguntas</span></div>
+
+  <div class="q" data-c="c"><div class="qn">31</div><div class="qbody">
+    <p class="stem">Sobre un cuerpo actúan las fuerzas F₁ = (5î − 2ĵ) N, F₂ = (−2î + 6ĵ) N y F₃. Si el cuerpo se mueve con rapidez constante (equilibrio), el módulo de F₃, en N, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q31" value="a"><span class="ltr">a)</span><span class="txt">√10</span></label>
+      <label class="opt"><input type="radio" name="q31" value="b"><span class="ltr">b)</span><span class="txt">√13</span></label>
+      <label class="opt"><input type="radio" name="q31" value="c"><span class="ltr">c)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q31" value="d"><span class="ltr">d)</span><span class="txt">√15</span></label>
+      <label class="opt"><input type="radio" name="q31" value="e"><span class="ltr">e)</span><span class="txt">6</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> En equilibrio ΣF = 0 → F₃ = −(F₁ + F₂) = −[(5−2)î + (−2+6)ĵ] = −(3î + 4ĵ). Módulo = √(3² + 4²) = √25 = <b>5 N</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="d"><div class="qn">32</div><div class="qbody">
+    <p class="stem">En la figura, calcular el módulo del momento resultante de las fuerzas respecto al punto A, en N·m.</p>
+    <figure><svg viewBox="0 0 380 260" role="img" aria-label="Elemento estructural en L con fuerzas de 50 N horizontal arriba, 20 N y 30 N verticales hacia abajo">
+      <line x1="150" y1="210" x2="150" y2="60" stroke="currentColor" stroke-width="3" class="fig-stroke"/>
+      <line x1="150" y1="210" x2="300" y2="210" stroke="currentColor" stroke-width="3" class="fig-stroke"/>
+      <circle cx="150" cy="210" r="6" fill="none" stroke="currentColor" stroke-width="2" class="fig-stroke"/>
+      <text x="126" y="228" class="lbl-i">A</text>
+      <line x1="150" y1="60" x2="70" y2="60" stroke="currentColor" stroke-width="2" class="fig-stroke" marker-end="url(#arF)"/>
+      <text x="64" y="50" class="dim">50 N</text>
+      <line x1="176" y1="60" x2="176" y2="210" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" class="fig-stroke" marker-start="url(#arF)" marker-end="url(#arF)"/>
+      <text x="182" y="140" class="dim">4 m</text>
+      <line x1="210" y1="210" x2="210" y2="252" stroke="currentColor" stroke-width="2" class="fig-stroke" marker-end="url(#arF)"/>
+      <text x="196" y="248" class="dim">20 N</text>
+      <line x1="270" y1="210" x2="270" y2="252" stroke="currentColor" stroke-width="2" class="fig-stroke" marker-end="url(#arF)"/>
+      <text x="256" y="248" class="dim">30 N</text>
+      <line x1="150" y1="188" x2="210" y2="188" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" class="fig-stroke" marker-start="url(#arF)" marker-end="url(#arF)"/>
+      <text x="164" y="182" class="dim">2 m</text>
+      <line x1="150" y1="170" x2="270" y2="170" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" class="fig-stroke" marker-start="url(#arF)" marker-end="url(#arF)"/>
+      <text x="200" y="164" class="dim">3 m</text>
+      <defs><marker id="arF" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M 1 1 L 7 4 L 1 7 Z" fill="currentColor"/></marker></defs>
+    </svg></figure>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q32" value="a"><span class="ltr">a)</span><span class="txt">80</span></label>
+      <label class="opt"><input type="radio" name="q32" value="b"><span class="ltr">b)</span><span class="txt">60</span></label>
+      <label class="opt"><input type="radio" name="q32" value="c"><span class="ltr">c)</span><span class="txt">50</span></label>
+      <label class="opt"><input type="radio" name="q32" value="d"><span class="ltr">d)</span><span class="txt">70</span></label>
+      <label class="opt"><input type="radio" name="q32" value="e"><span class="ltr">e)</span><span class="txt">90</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Momento = fuerza × brazo perpendicular. La fuerza de 50 N (horizontal, a 4 m de altura) gira en un sentido: 50·4 = 200. Las de 20 N (a 2 m) y 30 N (a 3 m) giran en sentido contrario: 20·2 = 40 y 30·3 = 90. Resultante = 200 − 40 − 90 = <b>70 N·m</b>.
+    <figure><svg viewBox="0 0 320 170" role="img" aria-label="Diagrama de resolución: momentos respecto a A">
+      <line x1="120" y1="135" x2="120" y2="45" stroke="currentColor" stroke-width="2.5" class="fig-stroke"/>
+      <line x1="120" y1="135" x2="250" y2="135" stroke="currentColor" stroke-width="2.5" class="fig-stroke"/>
+      <circle cx="120" cy="135" r="5" fill="none" stroke="currentColor" stroke-width="2" class="fig-stroke"/>
+      <text x="100" y="150" class="lbl-i">A</text>
+      <line x1="120" y1="45" x2="60" y2="45" stroke="currentColor" stroke-width="2" class="fig-stroke" marker-end="url(#arRf)"/>
+      <text x="36" y="40" class="dim">50 N</text>
+      <line x1="170" y1="135" x2="170" y2="162" stroke="currentColor" stroke-width="2" class="fig-stroke" marker-end="url(#arRf)"/>
+      <text x="156" y="160" class="dim">20 N</text>
+      <line x1="220" y1="135" x2="220" y2="162" stroke="currentColor" stroke-width="2" class="fig-stroke" marker-end="url(#arRf)"/>
+      <text x="206" y="160" class="dim">30 N</text>
+      <path d="M 96 108 A 26 26 0 0 1 108 86" fill="none" stroke="var(--ok)" stroke-width="1.6" marker-end="url(#arOk)"/>
+      <text x="150" y="72" class="dim" style="fill:var(--ok)">50·4 = 200 (⟲)</text>
+      <path d="M 148 120 A 26 26 0 0 0 138 100" fill="none" stroke="var(--bad)" stroke-width="1.6" marker-end="url(#arBad)"/>
+      <text x="150" y="122" class="dim" style="fill:var(--bad)">20·2+30·3 = 130 (⟳)</text>
+      <defs>
+        <marker id="arRf" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M 1 1 L 7 4 L 1 7 Z" fill="currentColor"/></marker>
+        <marker id="arOk" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M 1 1 L 6 3.5 L 1 6 Z" fill="var(--ok)"/></marker>
+        <marker id="arBad" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M 1 1 L 6 3.5 L 1 6 Z" fill="var(--bad)"/></marker>
+      </defs>
+    </svg><div class="figcap">M = 200 − 130 = 70 N·m</div></figure>
+    <span class="clave">Clave: D</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">33</div><div class="qbody">
+    <p class="stem">Un bloque de 2 kg es lanzado sobre una superficie rugosa con una rapidez de 10 m/s. Determinar su rapidez, en m/s, cuando ha disipado 75 J por fricción.</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q33" value="a"><span class="ltr">a)</span><span class="txt">3</span></label>
+      <label class="opt"><input type="radio" name="q33" value="b"><span class="ltr">b)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q33" value="c"><span class="ltr">c)</span><span class="txt">4</span></label>
+      <label class="opt"><input type="radio" name="q33" value="d"><span class="ltr">d)</span><span class="txt">√2</span></label>
+      <label class="opt"><input type="radio" name="q33" value="e"><span class="ltr">e)</span><span class="txt">2</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Energía cinética inicial = ½·2·10² = 100 J. Al disipar 75 J queda EC = 100 − 75 = 25 J. Entonces ½·2·v² = 25 → v² = 25 → v = <b>5 m/s</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">34</div><div class="qbody">
+    <p class="stem">Un bloque de 60 N se desplaza por acción de una fuerza horizontal F = 40 N. El coeficiente de rozamiento cinético entre el bloque y el piso es 0,25. Determinar el trabajo realizado por "F" al cabo de 3 s, si parte del reposo. (g = 10 m/s²)</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q34" value="a"><span class="ltr">a)</span><span class="txt">600</span></label>
+      <label class="opt"><input type="radio" name="q34" value="b"><span class="ltr">b)</span><span class="txt">720</span></label>
+      <label class="opt"><input type="radio" name="q34" value="c"><span class="ltr">c)</span><span class="txt">750</span></label>
+      <label class="opt"><input type="radio" name="q34" value="d"><span class="ltr">d)</span><span class="txt">800</span></label>
+      <label class="opt"><input type="radio" name="q34" value="e"><span class="ltr">e)</span><span class="txt">675</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Masa m = 60/10 = 6 kg. Fricción f = 0,25·60 = 15 N. Fuerza neta = 40 − 15 = 25 N → a = 25/6 m/s². Distancia en 3 s desde el reposo: d = ½·(25/6)·3² = 225/12 = 18,75 m. Trabajo de F = 40·18,75 = <b>750 J</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="d"><div class="qn">35</div><div class="qbody">
+    <p class="stem">Determine el impulso resultante, en N·s, sobre un bloque de 2 kg desde t = 0 hasta t = 4 s, según la gráfica F vs t mostrada (superficie lisa).</p>
+    <figure><svg viewBox="0 0 380 220" role="img" aria-label="Gráfica fuerza-tiempo: recta desde el origen hasta el punto 4 s, 40 N">
+      <line x1="60" y1="180" x2="350" y2="180" stroke="currentColor" stroke-width="1.6" class="fig-stroke" marker-end="url(#arG)"/>
+      <line x1="60" y1="180" x2="60" y2="30" stroke="currentColor" stroke-width="1.6" class="fig-stroke" marker-end="url(#arG)"/>
+      <text x="326" y="200" class="dim">t (s)</text>
+      <text x="22" y="26" class="dim">F (N)</text>
+      <polygon points="60,180 300,60 300,180" fill="currentColor" opacity=".12"/>
+      <line x1="60" y1="180" x2="300" y2="60" stroke="currentColor" stroke-width="2" class="fig-stroke"/>
+      <line x1="60" y1="60" x2="300" y2="60" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" class="fig-stroke"/>
+      <line x1="300" y1="60" x2="300" y2="180" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" class="fig-stroke"/>
+      <text x="40" y="65" class="dim">40</text>
+      <text x="294" y="198" class="dim">4</text>
+      <defs><marker id="arG" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M 1 1 L 7 4 L 1 7 Z" fill="currentColor"/></marker></defs>
+    </svg></figure>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q35" value="a"><span class="ltr">a)</span><span class="txt">40</span></label>
+      <label class="opt"><input type="radio" name="q35" value="b"><span class="ltr">b)</span><span class="txt">60</span></label>
+      <label class="opt"><input type="radio" name="q35" value="c"><span class="ltr">c)</span><span class="txt">100</span></label>
+      <label class="opt"><input type="radio" name="q35" value="d"><span class="ltr">d)</span><span class="txt">80</span></label>
+      <label class="opt"><input type="radio" name="q35" value="e"><span class="ltr">e)</span><span class="txt">120</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> El impulso es el área bajo la gráfica F–t. Es un triángulo de base 4 s y altura 40 N: I = ½·(4)·(40) = <b>80 N·s</b>.
+    <figure><svg viewBox="0 0 300 170" role="img" aria-label="Diagrama de resolución: área bajo la gráfica F-t">
+      <line x1="45" y1="140" x2="280" y2="140" stroke="currentColor" stroke-width="1.5" class="fig-stroke" marker-end="url(#arGf)"/>
+      <line x1="45" y1="140" x2="45" y2="25" stroke="currentColor" stroke-width="1.5" class="fig-stroke" marker-end="url(#arGf)"/>
+      <text x="258" y="158" class="dim">t (s)</text><text x="12" y="22" class="dim">F (N)</text>
+      <polygon points="45,140 240,50 240,140" fill="var(--ok)" opacity=".2"/>
+      <line x1="45" y1="140" x2="240" y2="50" stroke="currentColor" stroke-width="2" class="fig-stroke"/>
+      <line x1="45" y1="50" x2="240" y2="50" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" class="fig-stroke"/>
+      <line x1="240" y1="50" x2="240" y2="140" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" class="fig-stroke"/>
+      <text x="26" y="55" class="dim">40</text><text x="234" y="158" class="dim">4</text>
+      <text x="110" y="120" class="dim" style="fill:var(--ok)">Área = I</text>
+      <defs><marker id="arGf" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M 1 1 L 7 4 L 1 7 Z" fill="currentColor"/></marker></defs>
+    </svg><div class="figcap">I = ½ · base · altura = ½(4)(40) = 80 N·s</div></figure>
+    <span class="clave">Clave: D</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">36</div><div class="qbody">
+    <p class="stem">Una esfera de 2 kg impacta frontalmente con una pared a 20 m/s y rebota con 10 m/s. Si estuvo en contacto con la pared 0,05 s, determinar el módulo de la fuerza media que ejerce la pared sobre la esfera, en N.</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q36" value="a"><span class="ltr">a)</span><span class="txt">1500</span></label>
+      <label class="opt"><input type="radio" name="q36" value="b"><span class="ltr">b)</span><span class="txt">2800</span></label>
+      <label class="opt"><input type="radio" name="q36" value="c"><span class="ltr">c)</span><span class="txt">1200</span></label>
+      <label class="opt"><input type="radio" name="q36" value="d"><span class="ltr">d)</span><span class="txt">4000</span></label>
+      <label class="opt"><input type="radio" name="q36" value="e"><span class="ltr">e)</span><span class="txt">4500</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Tomando positivo el sentido de rebote: Δp = m(v_f − v_i) = 2[10 − (−20)] = 2·30 = 60 kg·m/s. Fuerza media = |Δp|/t = 60/0,05 = <b>1200 N</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">37</div><div class="qbody">
+    <p class="stem">Las esferas A y B, de igual masa, se mueven como indica la figura. Si luego del choque la esfera B queda en reposo, determinar la rapidez que adquiere A, en m/s. (superficie lisa)</p>
+    <figure><svg viewBox="0 0 380 120" role="img" aria-label="Dos esferas A y B sobre una recta: A va a 10 m/s hacia la derecha, B a 20 m/s hacia la izquierda">
+      <line x1="30" y1="95" x2="350" y2="95" stroke="currentColor" stroke-width="2" class="fig-stroke"/>
+      <g stroke="currentColor" stroke-width="1" class="fig-stroke" opacity=".6"><path d="M 40 95 l -6 8 M 70 95 l -6 8 M 100 95 l -6 8 M 130 95 l -6 8 M 160 95 l -6 8 M 190 95 l -6 8 M 220 95 l -6 8 M 250 95 l -6 8 M 280 95 l -6 8 M 310 95 l -6 8 M 340 95 l -6 8"/></g>
+      <circle cx="110" cy="80" r="14" fill="none" stroke="currentColor" stroke-width="1.8" class="fig-stroke"/>
+      <text x="105" y="85" class="lbl-i">A</text>
+      <line x1="130" y1="55" x2="175" y2="55" stroke="currentColor" stroke-width="2" class="fig-stroke" marker-end="url(#arS)"/>
+      <text x="128" y="46" class="dim">10 m/s</text>
+      <circle cx="260" cy="80" r="14" fill="none" stroke="currentColor" stroke-width="1.8" class="fig-stroke"/>
+      <text x="255" y="85" class="lbl-i">B</text>
+      <line x1="240" y1="55" x2="195" y2="55" stroke="currentColor" stroke-width="2" class="fig-stroke" marker-end="url(#arS)"/>
+      <text x="238" y="46" class="dim">20 m/s</text>
+      <defs><marker id="arS" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M 1 1 L 7 4 L 1 7 Z" fill="currentColor"/></marker></defs>
+    </svg></figure>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q37" value="a"><span class="ltr">a)</span><span class="txt">11</span></label>
+      <label class="opt"><input type="radio" name="q37" value="b"><span class="ltr">b)</span><span class="txt">10</span></label>
+      <label class="opt"><input type="radio" name="q37" value="c"><span class="ltr">c)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q37" value="d"><span class="ltr">d)</span><span class="txt">12</span></label>
+      <label class="opt"><input type="radio" name="q37" value="e"><span class="ltr">e)</span><span class="txt">20</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Conservación de la cantidad de movimiento (masas iguales m). Tomando la derecha como positiva: m(10) + m(−20) = m·v_A + m·0 → 10 − 20 = v_A → v_A = −10. La rapidez es <b>10 m/s</b> (A se mueve hacia la izquierda).
+    <figure><svg viewBox="0 0 320 150" role="img" aria-label="Diagrama de resolución: antes y después del choque">
+      <text x="10" y="30" class="dim">Antes:</text>
+      <circle cx="70" cy="30" r="11" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/><text x="66" y="34" class="lbl-i" font-size="12">A</text>
+      <line x1="86" y1="30" x2="112" y2="30" stroke="currentColor" stroke-width="1.8" class="fig-stroke" marker-end="url(#arCf)"/><text x="88" y="20" class="dim">10</text>
+      <circle cx="190" cy="30" r="11" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/><text x="186" y="34" class="lbl-i" font-size="12">B</text>
+      <line x1="174" y1="30" x2="148" y2="30" stroke="currentColor" stroke-width="1.8" class="fig-stroke" marker-end="url(#arCf)"/><text x="150" y="20" class="dim">20</text>
+      <text x="10" y="95" class="dim">Después:</text>
+      <circle cx="70" cy="95" r="11" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/><text x="66" y="99" class="lbl-i" font-size="12">A</text>
+      <line x1="54" y1="95" x2="28" y2="95" stroke="currentColor" stroke-width="1.8" class="fig-stroke" marker-end="url(#arCf)"/><text x="30" y="85" class="dim">10</text>
+      <circle cx="190" cy="95" r="11" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/><text x="186" y="99" class="lbl-i" font-size="12">B</text>
+      <text x="205" y="99" class="dim">reposo</text>
+      <text x="10" y="132" class="dim">m(10) + m(−20) = m·v_A + 0  →  v_A = −10</text>
+      <defs><marker id="arCf" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M 1 1 L 7 4 L 1 7 Z" fill="currentColor"/></marker></defs>
+    </svg><div class="figcap">Conservación de la cantidad de movimiento (masas iguales)</div></figure>
+    <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="a"><div class="qn">38</div><div class="qbody">
+    <p class="stem">Una partícula realiza un MAS. Si su rapidez máxima es 8 m/s y su amplitud es 2 m, el periodo de oscilación, en segundos, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q38" value="a"><span class="ltr">a)</span><span class="txt">π/2</span></label>
+      <label class="opt"><input type="radio" name="q38" value="b"><span class="ltr">b)</span><span class="txt">π/4</span></label>
+      <label class="opt"><input type="radio" name="q38" value="c"><span class="ltr">c)</span><span class="txt">π</span></label>
+      <label class="opt"><input type="radio" name="q38" value="d"><span class="ltr">d)</span><span class="txt">2π</span></label>
+      <label class="opt"><input type="radio" name="q38" value="e"><span class="ltr">e)</span><span class="txt">π/5</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> La rapidez máxima en MAS es v_máx = ω·A → ω = v_máx/A = 8/2 = 4 rad/s. Periodo T = 2π/ω = 2π/4 = <b>π/2 s</b>. <span class="clave">Clave: A</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">39</div><div class="qbody">
+    <p class="stem">Determine la presión hidrostática, en Pa, en el fondo de un tanque que contiene agua hasta una altura de 2,5 m. (ρ_agua = 1000 kg/m³ ; g = 10 m/s²)</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q39" value="a"><span class="ltr">a)</span><span class="txt">1,5×10⁴</span></label>
+      <label class="opt"><input type="radio" name="q39" value="b"><span class="ltr">b)</span><span class="txt">2×10⁴</span></label>
+      <label class="opt"><input type="radio" name="q39" value="c"><span class="ltr">c)</span><span class="txt">2,5×10⁴</span></label>
+      <label class="opt"><input type="radio" name="q39" value="d"><span class="ltr">d)</span><span class="txt">3×10⁴</span></label>
+      <label class="opt"><input type="radio" name="q39" value="e"><span class="ltr">e)</span><span class="txt">1×10⁴</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Presión hidrostática P = ρ·g·h = 1000·10·2,5 = 25 000 Pa = <b>2,5×10⁴ Pa</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">40</div><div class="qbody">
+    <p class="stem">Un tanque muy ancho contiene agua. Por un orificio ubicado a 3,2 m por debajo de la superficie libre sale un chorro. Calcular la rapidez de salida del agua, en m/s. (g = 10 m/s²)</p>
+    <figure><svg viewBox="0 0 360 220" role="img" aria-label="Tanque con orificio lateral a 3,2 m de la superficie libre del agua">
+      <path d="M 90 40 L 90 200 L 230 200 L 230 40" fill="none" stroke="currentColor" stroke-width="2.2" class="fig-stroke"/>
+      <rect x="92" y="65" width="136" height="135" fill="currentColor" opacity=".1"/>
+      <line x1="92" y1="65" x2="228" y2="65" stroke="currentColor" stroke-width="1.4" class="fig-stroke"/>
+      <text x="138" y="58" class="dim">v ≅ 0</text>
+      <line x1="270" y1="65" x2="270" y2="170" stroke="currentColor" stroke-width="1" class="fig-stroke" marker-start="url(#arT)" marker-end="url(#arT)"/>
+      <line x1="228" y1="65" x2="300" y2="65" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" class="fig-stroke"/>
+      <text x="276" y="120" class="dim">3,2 m</text>
+      <circle cx="230" cy="170" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/>
+      <line x1="230" y1="170" x2="300" y2="170" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" class="fig-stroke"/>
+      <line x1="236" y1="170" x2="320" y2="170" stroke="currentColor" stroke-width="2.4" class="fig-stroke" marker-end="url(#arT)"/>
+      <text x="300" y="165" class="lbl-i">v</text>
+      <line x1="60" y1="200" x2="260" y2="200" stroke="currentColor" stroke-width="2" class="fig-stroke"/>
+      <g stroke="currentColor" stroke-width="1" class="fig-stroke" opacity=".6"><path d="M 68 200 l -6 8 M 92 200 l -6 8 M 116 200 l -6 8 M 140 200 l -6 8 M 164 200 l -6 8 M 188 200 l -6 8 M 212 200 l -6 8 M 236 200 l -6 8 M 260 200 l -6 8"/></g>
+      <defs><marker id="arT" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M 1 1 L 7 4 L 1 7 Z" fill="currentColor"/></marker></defs>
+    </svg></figure>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q40" value="a"><span class="ltr">a)</span><span class="txt">10</span></label>
+      <label class="opt"><input type="radio" name="q40" value="b"><span class="ltr">b)</span><span class="txt">8</span></label>
+      <label class="opt"><input type="radio" name="q40" value="c"><span class="ltr">c)</span><span class="txt">20</span></label>
+      <label class="opt"><input type="radio" name="q40" value="d"><span class="ltr">d)</span><span class="txt">40</span></label>
+      <label class="opt"><input type="radio" name="q40" value="e"><span class="ltr">e)</span><span class="txt">6</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Por el teorema de Torricelli, v = √(2gh) = √(2·10·3,2) = √64 = <b>8 m/s</b>.
+    <figure><svg viewBox="0 0 300 170" role="img" aria-label="Diagrama de resolución: Torricelli">
+      <path d="M 70 35 L 70 150 L 180 150 L 180 35" fill="none" stroke="currentColor" stroke-width="2" class="fig-stroke"/>
+      <rect x="72" y="55" width="106" height="95" fill="currentColor" opacity=".1"/>
+      <line x1="72" y1="55" x2="178" y2="55" stroke="currentColor" stroke-width="1.3" class="fig-stroke"/>
+      <text x="100" y="48" class="dim">v ≅ 0</text>
+      <line x1="215" y1="55" x2="215" y2="125" stroke="currentColor" stroke-width="1" class="fig-stroke" marker-start="url(#arTf)" marker-end="url(#arTf)"/>
+      <line x1="178" y1="55" x2="240" y2="55" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" class="fig-stroke"/>
+      <line x1="178" y1="125" x2="240" y2="125" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" class="fig-stroke"/>
+      <text x="220" y="95" class="dim">h = 3,2 m</text>
+      <circle cx="180" cy="125" r="3" fill="none" stroke="currentColor" stroke-width="1.5" class="fig-stroke"/>
+      <line x1="184" y1="125" x2="250" y2="125" stroke="currentColor" stroke-width="2.4" class="fig-stroke" marker-end="url(#arTf)"/>
+      <text x="200" y="118" class="lbl-i" style="fill:var(--ok)">v</text>
+      <defs><marker id="arTf" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M 1 1 L 7 4 L 1 7 Z" fill="currentColor"/></marker></defs>
+    </svg><div class="figcap">v = √(2gh) = √(2·10·3,2) = 8 m/s</div></figure>
+    <span class="clave">Clave: B</span></div>
+  </div></div>
+</section>
+
+<!-- ════════ GEOMETRÍA ════════ -->
+<section data-sec="Geometría">
+  <div class="sec-head"><h2>Geometría</h2><span class="count">10 preguntas</span></div>
+
+  <div class="q" data-c="c"><div class="qn">41</div><div class="qbody">
+    <p class="stem">En un triángulo ABC se traza la bisectriz interior BP (P en AC). Si AB = 6, BC = 9 y AC = 10, el valor de AP es:</p>
+    <figure><svg viewBox="0 0 320 200" role="img" aria-label="Triángulo ABC con bisectriz interior BP sobre el lado AC">
+      <polygon points="30,170 290,170 120,40" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/>
+      <line x1="120" y1="40" x2="134" y2="170" stroke="currentColor" stroke-width="1.4" class="fig-stroke"/>
+      <circle cx="30" cy="170" r="3" fill="currentColor" class="fig-stroke"/><circle cx="290" cy="170" r="3" fill="currentColor" class="fig-stroke"/>
+      <circle cx="120" cy="40" r="3" fill="currentColor" class="fig-stroke"/><circle cx="134" cy="170" r="3" fill="currentColor" class="fig-stroke"/>
+      <text x="16" y="186" class="lbl-i">A</text><text x="292" y="186" class="lbl-i">C</text><text x="114" y="32" class="lbl-i">B</text><text x="128" y="190" class="lbl-i">P</text>
+      <text x="58" y="100" class="dim">6</text><text x="212" y="100" class="dim">9</text>
+    </svg></figure>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q41" value="a"><span class="ltr">a)</span><span class="txt">3</span></label>
+      <label class="opt"><input type="radio" name="q41" value="b"><span class="ltr">b)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q41" value="c"><span class="ltr">c)</span><span class="txt">4</span></label>
+      <label class="opt"><input type="radio" name="q41" value="d"><span class="ltr">d)</span><span class="txt">4,5</span></label>
+      <label class="opt"><input type="radio" name="q41" value="e"><span class="ltr">e)</span><span class="txt">6</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Teorema de la bisectriz interior: AP/PC = AB/BC = 6/9 = 2/3. Como AP + PC = 10, AP = (2/5)·10 = <b>4</b>.
+    <figure><svg viewBox="0 0 300 160" role="img" aria-label="Diagrama de resolución: teorema de la bisectriz">
+      <polygon points="30,135 270,135 120,35" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/>
+      <line x1="120" y1="35" x2="126" y2="135" stroke="var(--ok)" stroke-width="1.6"/>
+      <text x="16" y="150" class="lbl-i">A</text><text x="272" y="150" class="lbl-i">C</text><text x="113" y="30" class="lbl-i">B</text><text x="120" y="152" class="lbl-i">P</text>
+      <text x="56" y="92" class="dim">6</text><text x="200" y="92" class="dim">9</text>
+      <text x="60" y="130" class="dim" style="fill:var(--ok)">AP=4</text><text x="170" y="130" class="dim" style="fill:var(--ok)">PC=6</text>
+      <text x="40" y="20" class="dim">AP / PC = AB / BC = 6/9 = 2/3</text>
+    </svg><div class="figcap">AP + PC = 10 → AP = (2/5)·10 = 4</div></figure>
+    <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">42</div><div class="qbody">
+    <p class="stem">En un triángulo rectángulo ABC, recto en B, se traza la altura BH relativa a la hipotenusa. Si AH = 4 y HC = 9, el valor de BH es:</p>
+    <figure><svg viewBox="0 0 320 180" role="img" aria-label="Triángulo rectángulo con altura BH sobre la hipotenusa, AH=4 y HC=9">
+      <polygon points="30,150 290,150 110,40" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/>
+      <line x1="110" y1="40" x2="110" y2="150" stroke="currentColor" stroke-width="1.4" class="fig-stroke"/>
+      <rect x="110" y="136" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1" class="fig-stroke" transform="translate(-14,0)"/>
+      <circle cx="30" cy="150" r="3" fill="currentColor" class="fig-stroke"/><circle cx="290" cy="150" r="3" fill="currentColor" class="fig-stroke"/>
+      <circle cx="110" cy="40" r="3" fill="currentColor" class="fig-stroke"/><circle cx="110" cy="150" r="3" fill="currentColor" class="fig-stroke"/>
+      <text x="16" y="166" class="lbl-i">A</text><text x="292" y="166" class="lbl-i">C</text><text x="104" y="32" class="lbl-i">B</text><text x="108" y="170" class="lbl-i">H</text>
+      <text x="64" y="166" class="dim">4</text><text x="196" y="166" class="dim">9</text>
+    </svg></figure>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q42" value="a"><span class="ltr">a)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q42" value="b"><span class="ltr">b)</span><span class="txt">6</span></label>
+      <label class="opt"><input type="radio" name="q42" value="c"><span class="ltr">c)</span><span class="txt">7</span></label>
+      <label class="opt"><input type="radio" name="q42" value="d"><span class="ltr">d)</span><span class="txt">6,5</span></label>
+      <label class="opt"><input type="radio" name="q42" value="e"><span class="ltr">e)</span><span class="txt">8</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Por el teorema de la altura (relaciones métricas en el triángulo rectángulo): BH² = AH·HC = 4·9 = 36 → BH = <b>6</b>.
+    <figure><svg viewBox="0 0 300 160" role="img" aria-label="Diagrama de resolución: teorema de la altura">
+      <polygon points="30,135 270,135 110,35" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/>
+      <line x1="110" y1="35" x2="110" y2="135" stroke="var(--ok)" stroke-width="1.8"/>
+      <rect x="96" y="121" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1" class="fig-stroke"/>
+      <text x="16" y="150" class="lbl-i">A</text><text x="272" y="150" class="lbl-i">C</text><text x="104" y="30" class="lbl-i">B</text><text x="104" y="152" class="lbl-i">H</text>
+      <text x="64" y="150" class="dim">4</text><text x="188" y="150" class="dim">9</text>
+      <text x="116" y="92" class="dim" style="fill:var(--ok)">BH</text>
+      <text x="60" y="22" class="dim">BH² = AH · HC = 4 · 9 = 36</text>
+    </svg><div class="figcap">BH = √36 = 6</div></figure>
+    <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="a"><div class="qn">43</div><div class="qbody">
+    <p class="stem">Los lados de un triángulo miden 5, 7 y 8. La longitud de la mediana relativa al lado que mide 8, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q43" value="a"><span class="ltr">a)</span><span class="txt">√21</span></label>
+      <label class="opt"><input type="radio" name="q43" value="b"><span class="ltr">b)</span><span class="txt">√19</span></label>
+      <label class="opt"><input type="radio" name="q43" value="c"><span class="ltr">c)</span><span class="txt">√23</span></label>
+      <label class="opt"><input type="radio" name="q43" value="d"><span class="ltr">d)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q43" value="e"><span class="ltr">e)</span><span class="txt">√17</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Teorema de la mediana: 4·m² = 2b² + 2c² − a², con a = 8 el lado al que es relativa y b = 5, c = 7. 4m² = 2(25) + 2(49) − 64 = 50 + 98 − 64 = 84 → m² = 21 → m = <b>√21</b>. <span class="clave">Clave: A</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">44</div><div class="qbody">
+    <p class="stem">En un triángulo ABC se traza la base media MN paralela al lado AC (M punto medio de AB y N punto medio de BC). Si la altura relativa al lado AC mide 12, la distancia del vértice B a la recta MN es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q44" value="a"><span class="ltr">a)</span><span class="txt">4</span></label>
+      <label class="opt"><input type="radio" name="q44" value="b"><span class="ltr">b)</span><span class="txt">5</span></label>
+      <label class="opt"><input type="radio" name="q44" value="c"><span class="ltr">c)</span><span class="txt">6</span></label>
+      <label class="opt"><input type="radio" name="q44" value="d"><span class="ltr">d)</span><span class="txt">8</span></label>
+      <label class="opt"><input type="radio" name="q44" value="e"><span class="ltr">e)</span><span class="txt">3</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> La base media MN pasa por los puntos medios, de modo que corta la altura justo a la mitad. La distancia del vértice B a MN es la mitad de la altura: 12/2 = <b>6</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">45</div><div class="qbody">
+    <p class="stem">En un trapecio, las bases miden 6 y 14. La longitud del segmento que une los puntos medios de las diagonales, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q45" value="a"><span class="ltr">a)</span><span class="txt">3</span></label>
+      <label class="opt"><input type="radio" name="q45" value="b"><span class="ltr">b)</span><span class="txt">4</span></label>
+      <label class="opt"><input type="radio" name="q45" value="c"><span class="ltr">c)</span><span class="txt">6</span></label>
+      <label class="opt"><input type="radio" name="q45" value="d"><span class="ltr">d)</span><span class="txt">10</span></label>
+      <label class="opt"><input type="radio" name="q45" value="e"><span class="ltr">e)</span><span class="txt">8</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> En todo trapecio, el segmento que une los puntos medios de las diagonales es igual a la semidiferencia de las bases: (B − b)/2 = (14 − 6)/2 = <b>4</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="d"><div class="qn">46</div><div class="qbody">
+    <p class="stem">En un trapecio, la base menor mide 8 y la mediana mide 11. La base mayor mide:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q46" value="a"><span class="ltr">a)</span><span class="txt">12</span></label>
+      <label class="opt"><input type="radio" name="q46" value="b"><span class="ltr">b)</span><span class="txt">13</span></label>
+      <label class="opt"><input type="radio" name="q46" value="c"><span class="ltr">c)</span><span class="txt">16</span></label>
+      <label class="opt"><input type="radio" name="q46" value="d"><span class="ltr">d)</span><span class="txt">14</span></label>
+      <label class="opt"><input type="radio" name="q46" value="e"><span class="ltr">e)</span><span class="txt">15</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> La mediana del trapecio es el promedio de las bases: m = (B + b)/2 → 11 = (B + 8)/2 → B + 8 = 22 → B = <b>14</b>. <span class="clave">Clave: D</span></div>
+  </div></div>
+
+  <div class="q" data-c="a"><div class="qn">47</div><div class="qbody">
+    <p class="stem">En una semicircunferencia de diámetro AB, se ubica el punto C. Si el arco AC mide 70°, la medida del ángulo ABC es:</p>
+    <figure><svg viewBox="0 0 300 170" role="img" aria-label="Semicircunferencia de diámetro AB con punto C y ángulo inscrito ABC">
+      <path d="M 40 150 A 110 110 0 0 1 260 150" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/>
+      <line x1="40" y1="150" x2="260" y2="150" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/>
+      <circle cx="95" cy="55.5" r="3" fill="currentColor" class="fig-stroke"/>
+      <line x1="40" y1="150" x2="95" y2="55.5" stroke="currentColor" stroke-width="1.3" class="fig-stroke"/>
+      <line x1="260" y1="150" x2="95" y2="55.5" stroke="currentColor" stroke-width="1.3" class="fig-stroke"/>
+      <text x="26" y="166" class="lbl-i">A</text><text x="264" y="166" class="lbl-i">B</text><text x="86" y="50" class="lbl-i">C</text>
+      <text x="70" y="110" class="dim">70°</text>
+    </svg></figure>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q47" value="a"><span class="ltr">a)</span><span class="txt">35°</span></label>
+      <label class="opt"><input type="radio" name="q47" value="b"><span class="ltr">b)</span><span class="txt">40°</span></label>
+      <label class="opt"><input type="radio" name="q47" value="c"><span class="ltr">c)</span><span class="txt">30°</span></label>
+      <label class="opt"><input type="radio" name="q47" value="d"><span class="ltr">d)</span><span class="txt">20°</span></label>
+      <label class="opt"><input type="radio" name="q47" value="e"><span class="ltr">e)</span><span class="txt">45°</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> El ángulo ABC es inscrito y subtiende el arco AC. Su medida es la mitad del arco: 70°/2 = <b>35°</b>.
+    <figure><svg viewBox="0 0 280 160" role="img" aria-label="Diagrama de resolución: ángulo inscrito igual a la mitad del arco">
+      <path d="M 40 140 A 100 100 0 0 1 240 140" fill="none" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/>
+      <line x1="40" y1="140" x2="240" y2="140" stroke="currentColor" stroke-width="1.6" class="fig-stroke"/>
+      <circle cx="90" cy="53" r="3" fill="currentColor" class="fig-stroke"/>
+      <line x1="40" y1="140" x2="90" y2="53" stroke="var(--ok)" stroke-width="1.5"/>
+      <line x1="240" y1="140" x2="90" y2="53" stroke="var(--ok)" stroke-width="1.5"/>
+      <path d="M 40 140 A 100 100 0 0 1 90 53" fill="none" stroke="var(--bad)" stroke-width="2.5"/>
+      <text x="26" y="156" class="lbl-i">A</text><text x="244" y="156" class="lbl-i">B</text><text x="82" y="48" class="lbl-i">C</text>
+      <text x="40" y="100" class="dim" style="fill:var(--bad)">arco AC = 70°</text>
+      <text x="196" y="132" class="dim" style="fill:var(--ok)">B = 35°</text>
+    </svg><div class="figcap">Ángulo inscrito = ½ · arco = ½ · 70° = 35°</div></figure>
+    <span class="clave">Clave: A</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">48</div><div class="qbody">
+    <p class="stem">En un triángulo rectángulo los catetos miden 6 y 8. El radio de la circunferencia inscrita es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q48" value="a"><span class="ltr">a)</span><span class="txt">1</span></label>
+      <label class="opt"><input type="radio" name="q48" value="b"><span class="ltr">b)</span><span class="txt">2</span></label>
+      <label class="opt"><input type="radio" name="q48" value="c"><span class="ltr">c)</span><span class="txt">3</span></label>
+      <label class="opt"><input type="radio" name="q48" value="d"><span class="ltr">d)</span><span class="txt">4</span></label>
+      <label class="opt"><input type="radio" name="q48" value="e"><span class="ltr">e)</span><span class="txt">2,5</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> La hipotenusa es c = √(6² + 8²) = 10. En un triángulo rectángulo el inradio es r = (cateto + cateto − hipotenusa)/2 = (6 + 8 − 10)/2 = <b>2</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">49</div><div class="qbody">
+    <p class="stem">El ángulo interior de un polígono regular mide 150°. El número de diagonales de dicho polígono es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q49" value="a"><span class="ltr">a)</span><span class="txt">44</span></label>
+      <label class="opt"><input type="radio" name="q49" value="b"><span class="ltr">b)</span><span class="txt">35</span></label>
+      <label class="opt"><input type="radio" name="q49" value="c"><span class="ltr">c)</span><span class="txt">54</span></label>
+      <label class="opt"><input type="radio" name="q49" value="d"><span class="ltr">d)</span><span class="txt">65</span></label>
+      <label class="opt"><input type="radio" name="q49" value="e"><span class="ltr">e)</span><span class="txt">48</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> El ángulo exterior mide 180° − 150° = 30°, luego el número de lados es n = 360°/30° = 12. Número de diagonales = n(n − 3)/2 = 12·9/2 = <b>54</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="a"><div class="qn">50</div><div class="qbody">
+    <p class="stem">El número total de diagonales de un polígono convexo es el triple de su número de lados. ¿Cuántos lados tiene el polígono?</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q50" value="a"><span class="ltr">a)</span><span class="txt">9</span></label>
+      <label class="opt"><input type="radio" name="q50" value="b"><span class="ltr">b)</span><span class="txt">8</span></label>
+      <label class="opt"><input type="radio" name="q50" value="c"><span class="ltr">c)</span><span class="txt">10</span></label>
+      <label class="opt"><input type="radio" name="q50" value="d"><span class="ltr">d)</span><span class="txt">12</span></label>
+      <label class="opt"><input type="radio" name="q50" value="e"><span class="ltr">e)</span><span class="txt">7</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> n(n − 3)/2 = 3n. Multiplicando por 2: n(n − 3) = 6n → n − 3 = 6 → n = <b>9</b>. <span class="clave">Clave: A</span></div>
+  </div></div>
+</section>
+
+<!-- ════════ QUÍMICA ════════ -->
+<section data-sec="Química">
+  <div class="sec-head"><h2>Química</h2><span class="count">10 preguntas</span></div>
+
+  <div class="q" data-c="b"><div class="qn">51</div><div class="qbody">
+    <p class="stem">La fórmula correcta del sulfato de cromo (III) es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q51" value="a"><span class="ltr">a)</span><span class="txt">CrSO₄</span></label>
+      <label class="opt"><input type="radio" name="q51" value="b"><span class="ltr">b)</span><span class="txt">Cr₂(SO₄)₃</span></label>
+      <label class="opt"><input type="radio" name="q51" value="c"><span class="ltr">c)</span><span class="txt">Cr(SO₄)₃</span></label>
+      <label class="opt"><input type="radio" name="q51" value="d"><span class="ltr">d)</span><span class="txt">Cr₃(SO₄)₂</span></label>
+      <label class="opt"><input type="radio" name="q51" value="e"><span class="ltr">e)</span><span class="txt">Cr₂SO₄</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> El cromo (III) es Cr³⁺ y el ion sulfato es SO₄²⁻. Se intercambian cargas: Cr₂(SO₄)₃. <b>Cr₂(SO₄)₃</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">52</div><div class="qbody">
+    <p class="stem">El nombre correcto del compuesto Fe₂(SO₄)₃ es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q52" value="a"><span class="ltr">a)</span><span class="txt">Sulfato de hierro (II)</span></label>
+      <label class="opt"><input type="radio" name="q52" value="b"><span class="ltr">b)</span><span class="txt">Sulfito de hierro (III)</span></label>
+      <label class="opt"><input type="radio" name="q52" value="c"><span class="ltr">c)</span><span class="txt">Sulfato de hierro (III)</span></label>
+      <label class="opt"><input type="radio" name="q52" value="d"><span class="ltr">d)</span><span class="txt">Sulfuro de hierro (III)</span></label>
+      <label class="opt"><input type="radio" name="q52" value="e"><span class="ltr">e)</span><span class="txt">Sulfato de hierro (IV)</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> El anión es sulfato (SO₄²⁻). Tres sulfatos aportan −6, repartido entre dos hierros → cada Fe es +3. Entonces es <b>sulfato de hierro (III)</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">53</div><div class="qbody">
+    <p class="stem">El número de oxidación del cromo en el dicromato de potasio K₂Cr₂O₇, es:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q53" value="a"><span class="ltr">a)</span><span class="txt">+3</span></label>
+      <label class="opt"><input type="radio" name="q53" value="b"><span class="ltr">b)</span><span class="txt">+6</span></label>
+      <label class="opt"><input type="radio" name="q53" value="c"><span class="ltr">c)</span><span class="txt">+7</span></label>
+      <label class="opt"><input type="radio" name="q53" value="d"><span class="ltr">d)</span><span class="txt">+2</span></label>
+      <label class="opt"><input type="radio" name="q53" value="e"><span class="ltr">e)</span><span class="txt">+4</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> K: +1 (×2 = +2); O: −2 (×7 = −14). La molécula es neutra: 2 + 2·(E.O. del Cr) − 14 = 0 → 2·Cr = 12 → Cr = <b>+6</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="a"><div class="qn">54</div><div class="qbody">
+    <p class="stem">Respecto a los compuestos inorgánicos, marque la proposición correcta:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q54" value="a"><span class="ltr">a)</span><span class="txt">En el ácido sulfúrico (H₂SO₄) el azufre tiene estado de oxidación +6.</span></label>
+      <label class="opt"><input type="radio" name="q54" value="b"><span class="ltr">b)</span><span class="txt">El anhídrido carbónico es un peróxido.</span></label>
+      <label class="opt"><input type="radio" name="q54" value="c"><span class="ltr">c)</span><span class="txt">En el NaCl el sodio actúa con −1.</span></label>
+      <label class="opt"><input type="radio" name="q54" value="d"><span class="ltr">d)</span><span class="txt">El óxido de calcio es CaO₂.</span></label>
+      <label class="opt"><input type="radio" name="q54" value="e"><span class="ltr">e)</span><span class="txt">El agua es un hidruro metálico.</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> En H₂SO₄: H = +1 (×2 = +2), O = −2 (×4 = −8); neutro: 2 + S − 8 = 0 → S = +6. Las demás son falsas (CO₂ no es peróxido, el Na es +1, el óxido de calcio es CaO, el agua es un óxido/hidruro no metálico). <span class="clave">Clave: A</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">55</div><div class="qbody">
+    <p class="stem">¿Cuántas moléculas hay en 1,5 mol de dióxido de carbono (CO₂)? (N_A = 6,02×10²³)</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q55" value="a"><span class="ltr">a)</span><span class="txt">6,02×10²³</span></label>
+      <label class="opt"><input type="radio" name="q55" value="b"><span class="ltr">b)</span><span class="txt">1,2×10²⁴</span></label>
+      <label class="opt"><input type="radio" name="q55" value="c"><span class="ltr">c)</span><span class="txt">9,03×10²³</span></label>
+      <label class="opt"><input type="radio" name="q55" value="d"><span class="ltr">d)</span><span class="txt">3,01×10²³</span></label>
+      <label class="opt"><input type="radio" name="q55" value="e"><span class="ltr">e)</span><span class="txt">9,03×10²²</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> N° de moléculas = n·N_A = 1,5 · 6,02×10²³ = <b>9,03×10²³ moléculas</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="a"><div class="qn">56</div><div class="qbody">
+    <p class="stem">La masa, en gramos, de 3 moles de carbonato de calcio (CaCO₃) es: (masas atómicas: Ca = 40, C = 12, O = 16)</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q56" value="a"><span class="ltr">a)</span><span class="txt">300</span></label>
+      <label class="opt"><input type="radio" name="q56" value="b"><span class="ltr">b)</span><span class="txt">100</span></label>
+      <label class="opt"><input type="radio" name="q56" value="c"><span class="ltr">c)</span><span class="txt">150</span></label>
+      <label class="opt"><input type="radio" name="q56" value="d"><span class="ltr">d)</span><span class="txt">250</span></label>
+      <label class="opt"><input type="radio" name="q56" value="e"><span class="ltr">e)</span><span class="txt">200</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Masa molar de CaCO₃ = 40 + 12 + 3·16 = 100 g/mol. Masa = n·M = 3·100 = <b>300 g</b>. <span class="clave">Clave: A</span></div>
+  </div></div>
+
+  <div class="q" data-c="d"><div class="qn">57</div><div class="qbody">
+    <p class="stem">Un litro de una sustancia gaseosa a condiciones normales tiene una masa de 1,25 g. Su masa molar, en g/mol, es: (1 mol de gas ocupa 22,4 L a C.N.)</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q57" value="a"><span class="ltr">a)</span><span class="txt">22,4</span></label>
+      <label class="opt"><input type="radio" name="q57" value="b"><span class="ltr">b)</span><span class="txt">44</span></label>
+      <label class="opt"><input type="radio" name="q57" value="c"><span class="ltr">c)</span><span class="txt">16</span></label>
+      <label class="opt"><input type="radio" name="q57" value="d"><span class="ltr">d)</span><span class="txt">28</span></label>
+      <label class="opt"><input type="radio" name="q57" value="e"><span class="ltr">e)</span><span class="txt">30</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> La masa molar = masa de 22,4 L a C.N. Si 1 L pesa 1,25 g, entonces M = 1,25 g/L · 22,4 L/mol = <b>28 g/mol</b>. <span class="clave">Clave: D</span></div>
+  </div></div>
+
+  <div class="q" data-c="b"><div class="qn">58</div><div class="qbody">
+    <p class="stem">Una sustancia contiene 40% de carbono, 6,67% de hidrógeno y 53,33% de oxígeno. Su fórmula empírica es: (masas atómicas: C = 12, H = 1, O = 16)</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q58" value="a"><span class="ltr">a)</span><span class="txt">C₂H₄O₂</span></label>
+      <label class="opt"><input type="radio" name="q58" value="b"><span class="ltr">b)</span><span class="txt">CH₂O</span></label>
+      <label class="opt"><input type="radio" name="q58" value="c"><span class="ltr">c)</span><span class="txt">CHO</span></label>
+      <label class="opt"><input type="radio" name="q58" value="d"><span class="ltr">d)</span><span class="txt">C₂H₆O</span></label>
+      <label class="opt"><input type="radio" name="q58" value="e"><span class="ltr">e)</span><span class="txt">CH₄O</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Moles (en 100 g): C = 40/12 = 3,33 ; H = 6,67/1 = 6,67 ; O = 53,33/16 = 3,33. Dividiendo entre el menor (3,33): C = 1, H = 2, O = 1 → <b>CH₂O</b>. <span class="clave">Clave: B</span></div>
+  </div></div>
+
+  <div class="q" data-c="c"><div class="qn">59</div><div class="qbody">
+    <p class="stem">¿Cuántos litros de oxígeno, a condiciones normales, se obtienen al descomponer 245 g de clorato de potasio según 2KClO₃ → 2KCl + 3O₂? (masas atómicas: K = 39, Cl = 35,5, O = 16)</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q59" value="a"><span class="ltr">a)</span><span class="txt">44,8</span></label>
+      <label class="opt"><input type="radio" name="q59" value="b"><span class="ltr">b)</span><span class="txt">22,4</span></label>
+      <label class="opt"><input type="radio" name="q59" value="c"><span class="ltr">c)</span><span class="txt">67,2</span></label>
+      <label class="opt"><input type="radio" name="q59" value="d"><span class="ltr">d)</span><span class="txt">33,6</span></label>
+      <label class="opt"><input type="radio" name="q59" value="e"><span class="ltr">e)</span><span class="txt">89,6</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> M(KClO₃) = 39 + 35,5 + 3·16 = 122,5 g/mol → moles de KClO₃ = 245/122,5 = 2 mol. Por la relación 2:3, moles de O₂ = (3/2)·2 = 3 mol. Volumen a C.N. = 3·22,4 = <b>67,2 L</b>. <span class="clave">Clave: C</span></div>
+  </div></div>
+
+  <div class="q" data-c="d"><div class="qn">60</div><div class="qbody">
+    <p class="stem">La reacción química Zn(s) + 2HCl(ac) → ZnCl₂(ac) + H₂(g), según el agrupamiento atómico, se clasifica como:</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="q60" value="a"><span class="ltr">a)</span><span class="txt">Síntesis o adición</span></label>
+      <label class="opt"><input type="radio" name="q60" value="b"><span class="ltr">b)</span><span class="txt">Descomposición</span></label>
+      <label class="opt"><input type="radio" name="q60" value="c"><span class="ltr">c)</span><span class="txt">Doble desplazamiento (metátesis)</span></label>
+      <label class="opt"><input type="radio" name="q60" value="d"><span class="ltr">d)</span><span class="txt">Desplazamiento simple</span></label>
+      <label class="opt"><input type="radio" name="q60" value="e"><span class="ltr">e)</span><span class="txt">Reversible</span></label>
+    </div>
+    <div class="sol"><b>Resolución.</b> Un elemento libre (Zn) desplaza a otro elemento (H) de su compuesto (HCl), liberándolo como H₂. Por el agrupamiento atómico es una reacción de <b>desplazamiento simple</b>. <span class="clave">Clave: D</span></div>
+  </div></div>
+</section>
+
+<button class="cta" id="finish" type="button">Terminar examen y calificar</button>
+</form>
+
+<div id="result">
+  <div class="score-card">
+    <div class="score-top">
+      <div class="big" id="nota">—</div>
+      <div class="of">nota vigesimal (promedio)</div>
+      <div class="pts"><span id="score">—</span> puntos de 120</div>
+    </div>
+    <table class="bysec">
+      <thead><tr><th>Curso</th><th class="num">Bien</th><th class="num">Mal</th><th class="num">Blanco</th><th class="nota">Nota /20</th></tr></thead>
+      <tbody id="secBody"></tbody>
+    </table>
+  </div>
+  <p class="note">Desplázate hacia arriba: debajo de cada pregunta aparece la <b>resolución detallada</b> con la clave correcta.</p>
+</div>
+
+<p class="foot">Simulacro construido sobre los temarios y bancos oficiales CEPRU UNSAAC 2026-II · Resultados exactos, sin redondeo.</p>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var left = 120*60, running = true, graded = false;
+  var form = document.getElementById('exam');
+  var qs = Array.prototype.slice.call(form.querySelectorAll('.q'));
+  var clockEl = document.getElementById('clock');
+  var answeredEl = document.getElementById('answered');
+  var blanksEl = document.getElementById('blanks');
+  var jumpBtn = document.getElementById('jump');
+  var finishBtn = document.getElementById('finish');
+  function fmt(s){ if(s<0)s=0; var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=s%60; return h+':'+String(m).padStart(2,'0')+':'+String(x).padStart(2,'0'); }
+  function tick(){ if(!running||graded)return; left--; clockEl.textContent=fmt(left); clockEl.classList.toggle('warn',left<=1800&&left>600); clockEl.classList.toggle('crit',left<=600); if(left<=0)grade(); }
+  setInterval(tick,1000);
+  function picked(q){ var r=q.querySelector('input:checked'); return r?r.value:null; }
+  function refresh(){ var n=0; qs.forEach(function(q){ if(picked(q))n++; }); answeredEl.textContent=n; blanksEl.textContent=qs.length-n; }
+  form.addEventListener('change',function(){ if(!graded)refresh(); });
+  jumpBtn.addEventListener('click',function(){ var nx=qs.find(function(q){return !picked(q);}); if(nx)nx.scrollIntoView({behavior:'smooth',block:'start'}); });
+  function notaVigesimal(correct){
+    var whole=Math.floor(correct/3), rem=correct%3;
+    if(rem===0) return String(whole);
+    if(rem===1) return whole+',33…';
+    return whole+',66…';
+  }
+  function grade(){
+    if(graded)return; graded=true; running=false;
+    jumpBtn.disabled=true; finishBtn.disabled=true; finishBtn.textContent='Examen calificado';
+    var totalCorrect=0, totalPts=0, bySec={}, order=[];
+    qs.forEach(function(q){
+      var correct=q.dataset.c, chosen=picked(q), sec=q.closest('section').dataset.sec;
+      if(!bySec[sec]){ bySec[sec]={c:0,w:0,b:0}; order.push(sec); }
+      var state;
+      if(chosen===null){ nB(); state='blank'; }
+      else if(chosen===correct){ bySec[sec].c++; totalCorrect++; totalPts+=2; state='ok'; }
+      else { bySec[sec].w++; state='bad'; }
+      function nB(){ bySec[sec].b++; }
+      q.classList.add('graded');
+      q.querySelectorAll('input').forEach(function(inp){ inp.disabled=true; var opt=inp.closest('.opt'); if(inp.value===correct)opt.classList.add('correct'); else if(inp.checked)opt.classList.add('wrong'); });
+      var v=document.createElement('div'); v.className='verdict '+state;
+      v.textContent = state==='ok' ? 'Correcta · +2' : state==='blank' ? 'En blanco · 0 · la clave era '+correct.toUpperCase() : 'Incorrecta · 0 · la clave era '+correct.toUpperCase();
+      var solDiv=q.querySelector('.sol');
+      q.querySelector('.qbody').insertBefore(v, solDiv);
+    });
+    document.getElementById('score').textContent=totalPts;
+    document.getElementById('nota').textContent=notaVigesimal(totalCorrect);
+
+    // ==========================================
+    // ENVIAR PUNTAJE AL SERVIDOR Y BASE DE DATOS
+    // ==========================================
+    try {
+      var nombreEstudiante = (function(){ try { return localStorage.getItem('estudiante_nombre'); } catch(e){ return null; } })() || 'Anónimo';
+      fetch('/api/guardar-resultado', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: nombreEstudiante, puntaje: totalPts })
+      })
+      .then(function(res){ return res.json(); })
+      .then(function(data){ console.log('Resultado sincronizado con la base de datos.'); })
+      .catch(function(err){ console.error('Error al guardar en la BD:', err); });
+    } catch(e){ console.error('Error al enviar resultado:', e); }
+
+    var body=document.getElementById('secBody');
+    order.forEach(function(sec){ var d=bySec[sec]; var tr=document.createElement('tr'); tr.innerHTML='<td>'+sec+'</td><td class="num">'+d.c+'</td><td class="num">'+d.w+'</td><td class="num">'+d.b+'</td><td class="nota">'+(d.c*2)+'</td>'; body.appendChild(tr); });
+    document.getElementById('result').classList.add('show');
+    document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  var armed=false;
+  finishBtn.addEventListener('click',function(){ if(graded)return; var n=qs.filter(function(q){return !picked(q);}).length; if(n>0&&!armed){ armed=true; finishBtn.textContent='Te quedan '+n+' sin marcar · pulsa otra vez para calificar'; return; } grade(); });
+  form.addEventListener('change',function(){ if(graded||!armed)return; var n=qs.filter(function(q){return !picked(q);}).length; if(n===0){armed=false;finishBtn.textContent='Terminar examen y calificar';} });
+  refresh(); clockEl.textContent=fmt(left);
+})();
+</script>

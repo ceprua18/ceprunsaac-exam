@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Exclusivo | Simulacro UNSAAC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #121212;
+            --border-color: #222222;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-purple: #a855f7;
+            --accent-purple-glow: rgba(168, 85, 247, 0.15);
+            --button-bg: #ffffff;
+            --button-text: #000000;
+            --button-hover: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .checkout-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .checkout-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header-section h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .header-section p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .qr-container {
+            background: #0a0a0a;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .qr-frame {
+            width: 110px;
+            height: 110px;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px var(--accent-purple-glow);
+        }
+
+        .qr-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .qr-details {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .qr-details strong {
+            display: block;
+            color: var(--text-primary);
+            font-size: 14px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .highlight-price {
+            color: var(--accent-purple);
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: #0a0a0a;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 15px;
+            text-align: center;
+            letter-spacing: 1.5px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px var(--accent-purple-glow);
+        }
+
+        /* Cajita de error en pago */
+        .error-message {
+            background: rgba(248, 81, 73, 0.15);
+            border: 1px solid #f85149;
+            color: #ff7b72;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            font-weight: 600;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-action:hover {
+            background: var(--button-hover);
+        }
+
+        .btn-action:active {
+            transform: scale(0.98);
+        }
+
+        .btn-action:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+        }
+
+        .footer-support {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .footer-support a {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-support a:hover {
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="checkout-box">
+        <div class="header-section">
+            <h1>Desbloqueo de Acceso</h1>
+            <p>Escanea el QR y obtén tu pase oficial al simulacro</p>
+        </div>
+
+        <div class="qr-container">
+            <div class="qr-frame">
+                <img src="https://files.catbox.moe/gc90qg.jpeg" alt="QR Yape">
+            </div>
+            <div class="qr-details">
+                <strong>Yape / Plin</strong>
+                Jhojan Carrillo<br>
+                <span>925 641 598</span><br>
+                Total: <span class="highlight-price">S/ 1.00</span>
+            </div>
+        </div>
+
+        <!-- Mensaje de error visual -->
+        <div id="errorMsg" class="error-message"></div>
+
+        <form id="codeForm">
+            <div class="input-group">
+                <label for="codigo">Código de Acceso Único</label>
+                <input type="text" id="codigo" name="codigo" placeholder="UNSAAC-XXXX" required autocomplete="off">
+            </div>
+
+            <button type="submit" id="btnValidar" class="btn-action">Validar e Ingresar</button>
+        </form>
+
+        <div class="footer-support">
+            <a href="https://wa.me/51925641598?text=Hola,%20ya%20realicé%20el%20pago%20de%20S/1.00%20para%20el%20simulacro%20UNSAAC.%20Mi%20nombre%20es..." target="_blank">
+                💬 ¿Ya pagaste? Pide tu código por WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('codeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const codigoInput = document.getElementById('codigo');
+            const codigo = codigoInput.value.trim();
+            const btnValidar = document.getElementById('btnValidar');
+            const errorDiv = document.getElementById('errorMsg');
+
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            if (!codigo) {
+                errorDiv.textContent = 'Por favor ingresa tu código de acceso.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            btnValidar.disabled = true;
+            btnValidar.textContent = "Validando código...";
+
+            try {
+                const response = await fetch('/api/validar-codigo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo: codigo })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Código incorrecto.');
+                }
+
+                // ¡ÉXITO! Redirige directo a la página del examen
+                window.location.href = '/examen';
+
+            } catch (err) {
+                errorDiv.textContent = err.message;
+                errorDiv.style.display = 'block';
+                btnValidar.disabled = false;
+                btnValidar.textContent = "Validar e Ingresar";
+            }
+        });
+    </script>
+</body>
+</html>

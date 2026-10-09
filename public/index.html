@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNSAAC Simulacros | Reto Semanal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="container">
+        <span class="badge">🔥 Reto Oficial Dominical</span>
+        <h1>Simulacro UNSAAC</h1>
+        <p>Prepárate, mide tu nivel y asegúrate un puesto en el ranking de este domingo.</p>
+
+        <!-- Nota / Aviso visual de error -->
+        <div id="errorMsg" class="error-message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="nombre">Tu Nombre o Apodo</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Ej. Alex 'El Tatero'" required autocomplete="off">
+            </div>
+
+            <!-- Opciones obligatorias de visibilidad -->
+            <div class="options-container">
+                <label class="radio-option">
+                    <input type="radio" name="modoVisibilidad" value="publico" checked>
+                    <span>Guardar mi puntaje para participar en el ranking semanal de este domingo 🏆</span>
+                </label>
+
+                <label class="radio-option">
+                    <input type="radio" name="modoVisibilidad" value="anonimo">
+                    <span>Ocultar mi identidad (Modo anónimo en el ranking público) 🕵️‍♂️</span>
+                </label>
+            </div>
+
+            <button type="submit" id="btnSubmit" class="btn-submit">¡Comenzar el Simulacro!</button>
+        </form>
+
+        <div class="footer-note">
+            Los resultados oficiales y el podio se publican todos los domingos por la noche.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const nombreInput = document.getElementById('nombre');
+            const nombre = nombreInput.value.trim();
+            const modoVisibilidad = document.querySelector('input[name="modoVisibilidad"]:checked');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const errorDiv = document.getElementById('errorMsg');
+
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            if (!nombre) {
+                errorDiv.textContent = 'Por favor ingresa tu nombre o apodo.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (!modoVisibilidad) {
+                errorDiv.textContent = 'Por favor selecciona una opción de participación.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (btnSubmit.disabled) return;
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = "Comprobando nombre...";
+
+            try {
+                const response = await fetch('/api/registrar-nombre', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        nombre: nombre, 
+                        modo: modoVisibilidad.value 
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'El usuario ya existe.');
+                }
+
+                localStorage.setItem('estudiante_nombre', nombre);
+                localStorage.setItem('modo_visibilidad', modoVisibilidad.value);
+                window.location.href = '/exam';
+
+            } catch (err) {
+                errorDiv.textContent = err.message;
+                errorDiv.style.display = 'block';
+                
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = "¡Comenzar el Simulacro!";
+            }
+        });
+    </script>
+
+</body>
+</html>
