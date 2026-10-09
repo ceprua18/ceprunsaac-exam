@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,40 +10,42 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Configuración de la base de datos SQLite
-const dbFile = path.join(__dirname, 'database.sqlite');
-const db = new sqlite3.Database(dbFile, (err) => {
-    if (err) {
-        console.error('Error al abrir la base de datos', err.message);
-    } else {
-        console.log('Conectado a SQLite con éxito.');
+// Configuración de la base de datos PostgreSQL (Neon)
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
     }
 });
 
-// Creación automática de tablas e índices únicos
-db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS codigos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        codigo TEXT UNIQUE,
-        estado TEXT DEFAULT 'disponible',
-        dispositivo_id TEXT DEFAULT NULL
-    )`);
+// Creación automática de tablas e índices únicos al iniciar
+async function initDb() {
+    try {
+        await pool.query(`CREATE TABLE IF NOT EXISTS codigos (
+            id SERIAL PRIMARY KEY,
+            codigo TEXT UNIQUE,
+            estado TEXT DEFAULT 'disponible',
+            dispositivo_id TEXT DEFAULT NULL
+        )`);
 
-    db.run(`CREATE TABLE IF NOT EXISTS resultados (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT UNIQUE,
-        codigo_usado TEXT,
-        puntaje REAL,
-        modo TEXT DEFAULT 'publico',
-        fecha DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`, () => {
-        db.run(`ALTER TABLE resultados ADD COLUMN estado TEXT DEFAULT 'pendiente'`, (alterErr) => {
-            // Ignora el error si la columna ya existe
-        });
-    });
+        await pool.query(`CREATE TABLE IF NOT EXISTS resultados (
+            id SERIAL PRIMARY KEY,
+            nombre TEXT UNIQUE,
+            codigo_usado TEXT,
+            puntaje REAL,
+            modo TEXT DEFAULT 'publico',
+            fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            estado TEXT DEFAULT 'pendiente'
+        )`);
 
-    db.run(`CREATE UNIQUE INDEX IF NOT EXISTS idx_nombre_lower ON resultados(LOWER(nombre))`);
-});
+        await pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_nombre_lower ON resultados(LOWER(nombre))`);
+        console.log('Conectado a PostgreSQL con éxito.');
+    } catch (err) {
+        console.error('Error al inicializar la base de datos', err.message);
+    }
+}
+
+initDb();
 
 // ==========================================
 // RUTAS PARA ENTREGAR LAS PÁGINAS HTML
@@ -65,7 +67,7 @@ app.get('/exam', (req, res) => {
 // ==========================================
 // RUTA API: Validación y registro de nombres
 // ==========================================
-app.post('/api/registrar-nombre', (req, res) => {
+app.post('/api/registrar-nombre', async (req, res) => {
     let { nombre, modo } = req.body;
 
     if (!nombre || !nombre.trim()) {
@@ -75,32 +77,28 @@ app.post('/api/registrar-nombre', (req, res) => {
     const nombreLimpio = nombre.trim().toLowerCase();
     const modoParticipacion = modo === 'anonimo' ? 'anonimo' : 'publico';
 
-    db.get(`SELECT * FROM resultados WHERE LOWER(nombre) = ?`, [nombreLimpio], (err, row) => {
-        if (err) {
-            console.error("Error en BD:", err.message);
-            return res.status(500).json({ error: 'Error interno en el servidor.' });
-        }
+    try {
+        const checkResult = await pool.query(`SELECT * FROM resultados WHERE LOWER(nombre) = $1`, [nombreLimpio]);
 
-        if (row) {
+        if (checkResult.rows.length > 0) {
             return res.status(400).json({ error: '⚠️ El nombre de usuario ya existe, por favor elige y cambia de nombre.' });
         }
 
-        const query = `INSERT INTO resultados (nombre, puntaje, modo, estado) VALUES (?, 0, ?, 'pendiente')`;
-        db.run(query, [nombre.trim(), modoParticipacion], function(err2) {
-            if (err2) {
-                return res.status(400).json({ error: '⚠️ El nombre de usuario ya existe.' });
-            }
-            
-            console.log(`¡Registrado con éxito! ID: ${this.lastID}, Nombre: ${nombre.trim()}, Modo: ${modoParticipacion}`);
-            return res.json({ success: true, message: 'Registrado correctamente' });
-        });
-    });
+        const query = `INSERT INTO resultados (nombre, puntaje, modo, estado) VALUES ($1, 0, $2, 'pendiente') RETURNING id`;
+        const insertResult = await pool.query(query, [nombre.trim(), modoParticipacion]);
+        
+        console.log(`¡Registrado con éxito! ID: ${insertResult.rows[0].id}, Nombre: ${nombre.trim()}, Modo: ${modoParticipacion}`);
+        return res.json({ success: true, message: 'Registrado correctamente' });
+    } catch (err) {
+        console.error("Error en BD:", err.message);
+        return res.status(400).json({ error: '⚠️ El nombre de usuario ya existe.' });
+    }
 });
 
 // ==========================================
 // RUTA API: Validación de códigos de acceso
 // ==========================================
-app.post('/api/validar-codigo', (req, res) => {
+app.post('/api/validar-codigo', async (req, res) => {
     let { codigo } = req.body;
 
     if (!codigo || !codigo.trim()) {
@@ -109,19 +107,11 @@ app.post('/api/validar-codigo', (req, res) => {
 
     const codigoLimpio = codigo.trim();
 
-    // Verificamos si el código existe en la base de datos
-    db.get(`SELECT * FROM codigos WHERE codigo = ?`, [codigoLimpio], (err, row) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error en el servidor.' });
-        }
+    try {
+        const result = await pool.query(`SELECT * FROM codigos WHERE codigo = $1`, [codigoLimpio]);
+        const row = result.rows[0];
 
-        // Nota: Si aún no has insertado códigos manualmente en tu tabla 'codigos', 
-        // puedes permitir que cualquier código pase para pruebas cambiando esto de momento.
-        // Por ahora validaremos contra la tabla:
         if (!row) {
-            // OPCIONAL FLEXIBLE PARA PRUEBAS: Si quieres que cualquier código inventado 
-            // te deje pasar mientras creas tus códigos, comitiva esta validación. 
-            // De lo contrario, exige que exista en la BD:
             return res.status(400).json({ error: '❌ Código de acceso inválido o no registrado.' });
         }
 
@@ -130,19 +120,18 @@ app.post('/api/validar-codigo', (req, res) => {
         }
 
         // Marcar como usado
-        db.run(`UPDATE codigos SET estado = 'usado' WHERE id = ?`, [row.id], (err2) => {
-            if (err2) {
-                console.error("Error al actualizar código:", err2);
-            }
-            return res.json({ success: true, message: 'Código válido' });
-        });
-    });
+        await pool.query(`UPDATE codigos SET estado = 'usado' WHERE id = $1`, [row.id]);
+        return res.json({ success: true, message: 'Código válido' });
+    } catch (err) {
+        console.error("Error en el servidor:", err);
+        return res.status(500).json({ error: 'Error en el servidor.' });
+    }
 });
 
 // ==========================================
 // RUTA API: Guardar puntaje del examen
 // ==========================================
-app.post('/api/guardar-resultado', (req, res) => {
+app.post('/api/guardar-resultado', async (req, res) => {
     let { nombre, puntaje } = req.body;
 
     if (!nombre) {
@@ -151,28 +140,25 @@ app.post('/api/guardar-resultado', (req, res) => {
 
     const nombreLimpio = nombre.trim().toLowerCase();
 
-    db.get(`SELECT estado FROM resultados WHERE LOWER(nombre) = ?`, [nombreLimpio], (err, row) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error en el servidor.' });
-        }
+    try {
+        const result = await pool.query(`SELECT estado FROM resultados WHERE LOWER(nombre) = $1`, [nombreLimpio]);
+        const row = result.rows[0];
 
         if (row && row.estado === 'completado') {
             return res.status(400).json({ error: '⚠️ Este examen ya fue registrado y enviado anteriormente.' });
         }
 
-        // Convertimos el puntaje bruto (ej: 12 puntos) a nota sobre 20 con 2 decimales (ej: 12 / 6 = 2.00)
         const notaVigesimalDecimal = Number((puntaje / 6).toFixed(2));
 
-        const query = `UPDATE resultados SET puntaje = ?, estado = 'completado' WHERE LOWER(nombre) = ?`;
-        db.run(query, [notaVigesimalDecimal, nombreLimpio], function(err2) {
-            if (err2) {
-                console.error("Error al guardar puntaje:", err2.message);
-                return res.status(500).json({ error: 'Error al actualizar el puntaje.' });
-            }
-            console.log(`¡Nota guardada con éxito! Estudiante: ${nombre}, Nota sobre 20: ${notaVigesimalDecimal}`);
-            return res.json({ success: true });
-        });
-    });
+        const query = `UPDATE resultados SET puntaje = $1, estado = 'completado' WHERE LOWER(nombre) = $2`;
+        await pool.query(query, [notaVigesimalDecimal, nombreLimpio]);
+
+        console.log(`¡Nota guardada con éxito! Estudiante: ${nombre}, Nota sobre 20: ${notaVigesimalDecimal}`);
+        return res.json({ success: true });
+    } catch (err2) {
+        console.error("Error al guardar puntaje:", err2.message);
+        return res.status(500).json({ error: 'Error al actualizar el puntaje.' });
+    }
 });
 
 // Iniciar el servidor web
