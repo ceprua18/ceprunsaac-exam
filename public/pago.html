@@ -3,305 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Exclusivo | Simulacro UNSAAC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Apoyo Voluntario - Simulacros UNSAAC</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --bg-color: #050505;
-            --card-bg: #121212;
-            --border-color: #222222;
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-            --accent-purple: #a855f7;
-            --accent-purple-glow: rgba(168, 85, 247, 0.15);
-            --button-bg: #ffffff;
-            --button-text: #000000;
-            --button-hover: #e5e7eb;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            background-color: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 24px 24px;
         }
-
-        .checkout-box {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 40px 32px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .checkout-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
-        }
-
-        .header-section {
-            text-align: center;
-            margin-bottom: 28px;
-        }
-
-        .header-section h1 {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            margin-bottom: 6px;
-            color: var(--text-primary);
-        }
-
-        .header-section p {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .qr-container {
-            background: #0a0a0a;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .qr-frame {
-            width: 110px;
-            height: 110px;
+        
+        .main-card {
             background: #ffffff;
-            border-radius: 12px;
-            overflow: hidden;
-            flex-shrink: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 20px var(--accent-purple-glow);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.05), 0 10px 15px -5px rgba(15, 23, 42, 0.03);
         }
 
-        .qr-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+        /* Marco sólido limpio para el QR */
+        .qr-card-box {
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1; /* Borde sólido */
+            border-radius: 20px;
         }
 
-        .qr-details {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.5;
+        /* Botón con sombra de brillo y degradado */
+        .btn-simulacro {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .qr-details strong {
-            display: block;
-            color: var(--text-primary);
-            font-size: 14px;
-            margin-bottom: 4px;
-            font-weight: 600;
+        .btn-simulacro:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            box-shadow: 0 14px 28px -4px rgba(37, 99, 235, 0.5);
+            transform: translateY(-2px);
         }
 
-        .highlight-price {
-            color: var(--accent-purple);
-            font-weight: 700;
+        .btn-simulacro:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 15px -3px rgba(37, 99, 235, 0.4);
         }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 14px 16px;
-            background: #0a0a0a;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 15px;
-            text-align: center;
-            letter-spacing: 1.5px;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .input-group input:focus {
-            border-color: var(--accent-purple);
-            box-shadow: 0 0 0 3px var(--accent-purple-glow);
-        }
-
-        /* Cajita de error en pago */
-        .error-message {
-            background: rgba(248, 81, 73, 0.15);
-            border: 1px solid #f85149;
-            color: #ff7b72;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            margin-bottom: 20px;
-            text-align: center;
-            display: none;
-            font-weight: 600;
-        }
-
-        .btn-action {
-            width: 100%;
-            padding: 14px;
-            background: var(--button-bg);
-            color: var(--button-text);
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-        }
-
-        .btn-action:hover {
-            background: var(--button-hover);
-        }
-
-        .btn-action:active {
-            transform: scale(0.98);
-        }
-
-        .btn-action:disabled {
-            background: #4b5563;
-            cursor: not-allowed;
-        }
-
-        .footer-support {
-            text-align: center;
-            margin-top: 24px;
-        }
-
-        .footer-support a {
-            font-size: 13px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .footer-support a:hover {
-            color: var(--text-primary);
+        .qr-shadow {
+            box-shadow: 0 10px 20px -5px rgba(113, 39, 122, 0.18);
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen font-sans flex items-center justify-center p-4 text-slate-800">
 
-    <div class="checkout-box">
-        <div class="header-section">
-            <h1>Desbloqueo de Acceso</h1>
-            <p>Escanea el QR y obtén tu pase oficial al simulacro</p>
+    <main class="main-card max-w-md w-full rounded-3xl p-6 sm:p-8 text-center relative my-auto">
+
+        <!-- Badge Superior -->
+        <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-100/80 border border-amber-200 text-amber-800 text-xs font-bold mb-4">
+            <span>❤️ APOYO VOLUNTARIO</span>
         </div>
 
-        <div class="qr-container">
-            <div class="qr-frame">
-                <img src="https://files.catbox.moe/gc90qg.jpeg" alt="QR Yape">
+        <!-- Título -->
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2.5">
+            ¡Mantengamos la plataforma gratuita! 🎓
+        </h1>
+
+        <!-- Subtítulo -->
+        <p class="text-slate-600 text-sm leading-relaxed mb-6 font-medium">
+            Este proyecto fue creado para apoyar a todos los postulantes de la <strong class="text-slate-900">UNSAAC</strong>. Tu donación nos ayuda a cubrir los costos de los servidores y mantener la web sin publicidad.
+        </p>
+
+        <!-- Contenedor QR con Marco Sólido -->
+        <div class="qr-card-box p-5 mb-6">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-qrcode text-purple-700 text-sm"></i> Escanea con Yape o Plin
             </div>
-            <div class="qr-details">
-                <strong>Yape / Plin</strong>
-                Jhojan Carrillo<br>
-                <span>925 641 598</span><br>
-                Total: <span class="highlight-price">S/ 1.00</span>
+
+            <!-- QR Image -->
+            <div class="inline-block relative">
+                <img src="https://files.catbox.moe/gc90qg.jpeg" 
+                     alt="QR Yape" 
+                     class="w-48 h-48 object-cover rounded-2xl border-2 border-white qr-shadow mx-auto transition-transform duration-300 hover:scale-[1.02]">
+            </div>
+
+            <!-- Botón interactivo de número Yape -->
+            <div class="mt-4">
+                <button onclick="copyNumber()" 
+                        id="copyBtn"
+                        title="Haz clic para copiar"
+                        class="w-full bg-white hover:bg-purple-50/50 active:scale-[0.98] text-slate-700 font-bold py-2.5 px-4 rounded-xl border border-slate-200 shadow-sm transition-all duration-200 flex items-center justify-center gap-2 group">
+                    <span class="text-xs text-slate-500 font-medium">Yape / Plin:</span>
+                    <span class="text-purple-700 font-extrabold text-base tracking-wide" id="numText">925 641 598</span>
+                    <i class="fa-regular fa-copy text-slate-400 group-hover:text-purple-600 transition-colors ml-1" id="copyIcon"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Mensaje de error visual -->
-        <div id="errorMsg" class="error-message"></div>
+        <!-- Texto Motivacional -->
+        <p class="text-xs font-semibold text-slate-500 mb-5">
+            ¡Cualquier aporte, suma un montón! 🙌
+        </p>
 
-        <form id="codeForm">
-            <div class="input-group">
-                <label for="codigo">Código de Acceso Único</label>
-                <input type="text" id="codigo" name="codigo" placeholder="UNSAAC-XXXX" required autocomplete="off">
-            </div>
+        <!-- Botón Principal "Seguir al simulacro" -->
+        <a href="/exam" 
+           class="btn-simulacro w-full py-3.5 px-6 rounded-2xl text-white font-bold text-base flex items-center justify-center gap-2.5">
+            <span>Seguir al simulacro</span>
+            <i class="fa-solid fa-arrow-right text-sm"></i>
+        </a>
 
-            <button type="submit" id="btnValidar" class="btn-action">Validar e Ingresar</button>
-        </form>
+    </main>
 
-        <div class="footer-support">
-            <a href="https://wa.me/51925641598?text=Hola,%20ya%20realicé%20el%20pago%20de%20S/1.00%20para%20el%20simulacro%20UNSAAC.%20Mi%20nombre%20es..." target="_blank">
-                💬 ¿Ya pagaste? Pide tu código por WhatsApp
-            </a>
-        </div>
-    </div>
-
+    <!-- Script para copiar el número -->
     <script>
-        document.getElementById('codeForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        function copyNumber() {
+            const number = "925641598";
+            
+            // Copiado al portapapeles
+            const tempInput = document.createElement("input");
+            tempInput.value = number;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
 
-            const codigoInput = document.getElementById('codigo');
-            const codigo = codigoInput.value.trim();
-            const btnValidar = document.getElementById('btnValidar');
-            const errorDiv = document.getElementById('errorMsg');
+            // Cambios de estado visual al copiar
+            const btn = document.getElementById("copyBtn");
+            const icon = document.getElementById("copyIcon");
+            const text = document.getElementById("numText");
 
-            errorDiv.style.display = 'none';
-            errorDiv.textContent = '';
+            const originalText = text.innerText;
+            text.innerText = "¡Copiado!";
+            icon.className = "fa-solid fa-check text-emerald-600";
+            btn.classList.add("border-purple-300", "bg-purple-50");
 
-            if (!codigo) {
-                errorDiv.textContent = 'Por favor ingresa tu código de acceso.';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            btnValidar.disabled = true;
-            btnValidar.textContent = "Validando código...";
-
-            try {
-                const response = await fetch('/api/validar-codigo', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ codigo: codigo })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Código incorrecto.');
-                }
-
-                // ¡ÉXITO! Redirige directo a la página del examen
-                window.location.href = '/examen';
-
-            } catch (err) {
-                errorDiv.textContent = err.message;
-                errorDiv.style.display = 'block';
-                btnValidar.disabled = false;
-                btnValidar.textContent = "Validar e Ingresar";
-            }
-        });
+            setTimeout(() => {
+                text.innerText = originalText;
+                icon.className = "fa-regular fa-copy text-slate-400 group-hover:text-purple-600";
+                btn.classList.remove("border-purple-300", "bg-purple-50");
+            }, 1800);
+        }
     </script>
 </body>
 </html>

@@ -54,11 +54,11 @@ initDb();
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-/*
-app.get('/exam', (req, res) => {
+
+app.get('/pago', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'pago.html'));
 });
-*/
+
 
 app.get('/exam', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'exam.html'));
